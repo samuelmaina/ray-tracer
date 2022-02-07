@@ -32,3 +32,4 @@
 *.app
 
 SDL2.dll
+SDL2/
