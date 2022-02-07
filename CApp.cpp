@@ -48,3 +48,17 @@ void CApp::OnEvent(SDL_Event *event)
         isRunning = false;
     }
 }
+void CApp::OnRender()
+{
+    //set the default colour that will be displayed to the screen.
+    SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
+    SDL_RendererPresent(pRenderer);
+}
+void CApp::OnExit()
+{
+    //clear the SDL2 stuff
+    SDL_DestroyRenderer(pRenderer);
+    SDL_DestroyWindow(pWindow);
+    pWindow = NULL;
+    SDL_Quit();
+}
