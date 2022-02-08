@@ -21,13 +21,6 @@ bool CApp::OnInit()
         int xLength = 1280, yLength = 720;
         pRenderer = SDL_CreateRenderer(pWindow, -1, 0);
         m_image.Initialize(xLength, yLength, pRenderer);
-        for (int x = 0; x < xLength; ++x)
-            for (int y = 0; y < yLength; ++y)
-            {
-                double red = (static_cast<double>(x) / static_cast<double>(xLength)) * 255.0;
-                double green = (static_cast<double>(y) / static_cast<double>(xLength)) * 255.0;
-                m_image.SetPixel(x, y, red, green, 0.0);
-            }
     }
     else
     {
@@ -64,12 +57,13 @@ void CApp::OnRender()
     //set the default colour that will be displayed to the screen.
     SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
     SDL_RenderClear(pRenderer);
+    m_scene.Render(m_image);
     m_image.Display();
     SDL_RenderPresent(pRenderer);
 }
 void CApp::OnExit()
 {
-    //clear th  e SDL2 stuff
+    //clear the SDL2 stuff
     SDL_DestroyRenderer(pRenderer);
     SDL_DestroyWindow(pWindow);
     pWindow = NULL;

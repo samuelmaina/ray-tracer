@@ -1,13 +1,12 @@
 #include "camera.hpp"
-#include "ray.h"
 #include "math.h"
 
 qbRT::Camera::Camera()
 {
     m_position = qbVector<double>{
-        std::vector<double>{o.o, -10, 0.0}};
+        std::vector<double>{0.0, -10, 0.0}};
     m_lookAt = qbVector<double>{std::vector<double>{0.0, 0.0, 0.0}};
-    m_cameraUp = qbVector<double>{0.0, 0.0, 1.0};
+    m_cameraUp = qbVector<double>{std::vector<double>{0.0, 0.0, 1.0}};
     m_length = 1.0;
     m_horiLength = 1.0;
     m_aspectRatio = 1.0;
@@ -73,24 +72,32 @@ void qbRT::Camera::UpdateCameraGeometry()
 
     //normalize the vector. The normalize vector has a magnitude of 1 which is convinient
     //for calculations.
-    m_alignVector.Normalise();
+    m_alignVector.Normalize();
 
     //compute the U and V vectors of the camera.
     m_projectionScreenU = qbVector<double>::cross(m_alignVector, m_cameraUp);
-    m_projectionScreenU.Normalise();
+    m_projectionScreenU.Normalize();
     //we have the alignVector and the U vector. use the two to find the V.
     //V is perpendicular to the plane spanned by the align vector and U.
-    m_projectionScreenV = qbVector<double>::cross(m_projectionScreenU, m_alingVector);
-    m_projectionScreenV.Normalise();
+    m_projectionScreenV = qbVector<double>::cross(m_projectionScreenU, m_alignVector);
+    m_projectionScreenV.Normalize();
 
     //compute  the position of the centre point of the screen.
     //move the screen;
     m_projectionScreenCentre = m_position + (m_length * m_alignVector);
 
     //Modify the U and V vectors to match the size and the aspect ratio.
-    m_projectionScreenU *= m_horiLength;
+    m_projectionScreenU = m_projectionScreenU * m_horiLength;
     m_projectionScreenV = m_projectionScreenV * (m_horiLength / m_aspectRatio);
 }
 
 //pro is projection
-qbRT::Camera::GenerateRay(float proScreenX, float proScreenY)
+qbRT::Ray qbRT::Camera::GenerateRay(float proScreenX, float proScreenY)
+{
+    //compute the location of the screen point in world coordinate.
+    qbVector<double> screen3DPart1 = m_projectionScreenCentre + (m_projectionScreenU * proScreenX);
+    qbVector<double> screen3DCoordinate = screen3DPart1 + (m_projectionScreenV * proScreenY);
+
+    //use this point along with the camera position to compute the ray.
+    return qbRT::Ray(m_position, screen3DCoordinate);
+}

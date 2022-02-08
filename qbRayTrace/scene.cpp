@@ -1,14 +1,12 @@
 #include "scene.hpp"
 
-using namespace qbRT;
-
-Scene::Scene()
+qbRT::Scene::Scene()
 {
 }
-bool Scene::Render(abImage &outputImage)
+bool qbRT::Scene::Render(qbImage &outputImage)
 {
-    int xSize = outputImage.getXSize();
-    int ySize = outputImage.getYSize();
+    int xSize = outputImage.GetXSize();
+    int ySize = outputImage.GetYSize();
 
     for (int x = 0; x < xSize; ++x)
         for (int y = 0; y < ySize; ++y)

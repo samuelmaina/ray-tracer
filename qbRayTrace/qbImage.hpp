@@ -28,7 +28,8 @@ public:
 
     //function to set color of  pixel
     void SetPixel(const int x, const int y, const double red, const double green, const double blue);
-
+    int GetXSize();
+    int GetYSize();
     //function that is used to display the image
     void Display();
 };

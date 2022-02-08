@@ -1,8 +1,9 @@
-#ifndef QBIMAGE_H
-#define QBIMAGE_H
+#ifndef SCENE_H
+#define SCENE_H
 
 #include <vector>
 #include <SDL2/SDL.h>
+#include "./qbImage.hpp"
 
 namespace qbRT
 {

@@ -1,5 +1,4 @@
 #include "./qbImage.hpp"
-#include "iostream"
 
 qbImage::qbImage()
 {
@@ -33,6 +32,15 @@ void qbImage::Initialize(const int xSize, const int ySize, SDL_Renderer *pRender
 
     //Initialize the texture.
     InitTexture();
+}
+
+int qbImage::GetXSize()
+{
+    return m_xSize;
+}
+int qbImage::GetYSize()
+{
+    return m_ySize;
 }
 
 void qbImage::SetPixel(const int x, const int y, const double red, const double green, const double blue)

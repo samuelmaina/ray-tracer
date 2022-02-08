@@ -1,7 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include "./qbRayTrace/qbLinAlg/qbVector.h"
+#include "./qbLinAlg/qbVector.h"
 
 namespace qbRT
 {
@@ -13,9 +13,9 @@ namespace qbRT
         qbVector<double> GetPoint2() const;
 
     private:
-        qbVector<double> m_point1(3);
-        qbVector<double> m_point2(3);
-        qbVector<double> m_lab(3);
-    }
-}
+        qbVector<double> m_point1{3};
+        qbVector<double> m_point2{3};
+        qbVector<double> m_lab{3};
+    };
+};
 #endif
