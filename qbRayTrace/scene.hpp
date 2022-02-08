@@ -5,7 +5,8 @@
 #include <SDL2/SDL.h>
 #include "qbImage.hpp"
 #include "camera.hpp"
-#include "objsphere.hpp"
+#include "objectbase.hpp"
+#include "pointlight.hpp"
 
 namespace qbRT
 {
@@ -13,7 +14,8 @@ namespace qbRT
     {
     private:
         qbRT::Camera camera;
-        std::vector<std::shared_ptr<qbRT::ObjectBase>> object_list;
+        std::vector<std::shared_ptr<qbRT::ObjectBase>> objectList;
+        std::vector<std::shared_ptr<qbRT::PointLight>> lightList;
 
     public:
         Scene(/* args */);
