@@ -14,3 +14,8 @@ qbVector<double> qbRT::Ray::GetPoint2() const
 {
     return m_point2;
 }
+
+qbVector<double> qbRT::Ray::GetRayVector() const
+{
+    return m_lab;
+}
