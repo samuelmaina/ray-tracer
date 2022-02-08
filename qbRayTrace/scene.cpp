@@ -52,7 +52,15 @@ bool qbRT::Scene::Render(qbImage &outputImage)
             bool validIntersection = testSphere.TestIntersection(cameraRay, intPoint, localNormal, localColor);
             if (validIntersection)
             {
-                outputImage.SetPixel(x, y, 255, 0.0, 0.0);
+                //compute the distance the camera and the point of intersection.
+                //the norm method calculates the distances.
+                double dist = (intPoint - cameraRay.GetPoint1()).norm();
+                if (dist > maxDist || dist < minDist)
+                {
+                    std::cout << "Point can not be displayed";
+                    exit(1);
+                }
+                outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.9405) * 255.0, 0.0, 0.0);
             }
             else
             {
@@ -63,7 +71,7 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     return true;
 }
 
-//generate a fuctor between 0, and 2,
+//generate a factor between 0, and 2,
 double getFactor(int size)
 {
     return 1.0 / (static_cast<double>(size) / 2.0);
