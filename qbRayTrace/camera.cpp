@@ -11,6 +11,10 @@ qbRT::Camera::Camera()
     m_horiLength = 1.0;
     m_aspectRatio = 1.0;
 }
+
+qbRT::Camera::~Camera(){
+
+};
 void qbRT::Camera::SetPosition(const qbVector<double> &newPosition)
 {
     m_position = newPosition;
@@ -92,12 +96,13 @@ void qbRT::Camera::UpdateCameraGeometry()
 }
 
 //pro is projection
-qbRT::Ray qbRT::Camera::GenerateRay(float proScreenX, float proScreenY)
+bool qbRT::Camera::GenerateRay(float proScreenX, float proScreenY, qbRT::Ray &cameraRay)
 {
     //compute the location of the screen point in world coordinate.
     qbVector<double> screen3DPart1 = m_projectionScreenCentre + (m_projectionScreenU * proScreenX);
     qbVector<double> screen3DCoordinate = screen3DPart1 + (m_projectionScreenV * proScreenY);
 
-    //use this point along with the camera position to compute the ray.
-    return qbRT::Ray(m_position, screen3DCoordinate);
+    Ray r = Ray(m_position, screen3DCoordinate);
+    cameraRay = r;
+    return true;
 }

@@ -1,7 +1,7 @@
 #include "CApp.h"
 #include <iostream>
 
-CApp::Capp()
+CApp::CApp()
 {
     isRunning = true;
     pWindow = NULL;
@@ -15,12 +15,18 @@ bool CApp::OnInit()
         return false;
     }
 
-    pWindow = SDL_CreateWindow("qbRayTracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 720, SDL_WINDOW_SHOWN);
+    int xLength = 512, yLength = 300;
+
+    pWindow = SDL_CreateWindow("qbRayTracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, xLength, yLength, SDL_WINDOW_SHOWN);
     if (pWindow != NULL)
     {
-        int xLength = 1280, yLength = 720;
         pRenderer = SDL_CreateRenderer(pWindow, -1, 0);
         m_image.Initialize(xLength, yLength, pRenderer);
+        SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
+        SDL_RenderClear(pRenderer);
+        m_scene.Render(m_image);
+        m_image.Display();
+        SDL_RenderPresent(pRenderer);
     }
     else
     {

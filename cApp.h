@@ -8,7 +8,7 @@
 class CApp
 {
 public:
-    Capp();
+    CApp();
     int OnExecute();
     bool OnInit();
     void OnEvent(SDL_Event *event);

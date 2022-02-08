@@ -1,4 +1,4 @@
-#include "./qbImage.hpp"
+#include "qbImage.hpp"
 
 qbImage::qbImage()
 {

@@ -27,8 +27,12 @@ namespace qbRT
         double GetLength();
         double GetHorizontalSize();
 
-        Ray GenerateRay(float proScreenX, float proScreenY);
+        //the camera array will be used as output, but the function will return true
+        //if it was able to create an ray.
+        bool GenerateRay(float proScreenX, float proScreenY, qbRT::Ray &cameraRay);
         void UpdateCameraGeometry();
+
+        ~Camera();
 
     private:
         qbVector<double> m_position{3};
@@ -42,8 +46,6 @@ namespace qbRT
         qbVector<double> m_projectionScreenU{3};
         qbVector<double> m_projectionScreenV{3};
         qbVector<double> m_projectionScreenCentre{3};
-
-        ~Camera();
     };
 
 }

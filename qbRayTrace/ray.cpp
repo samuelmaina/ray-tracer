@@ -2,11 +2,10 @@
 
 qbRT::Ray::Ray()
 {
-    m_point1 = qbVector<double>{
-        std::vector<double>{0.0, 0.0, 0.0}};
-    m_point1 = qbVector<double>{
-        std::vector<double>{0.0, 0.0, 0 = 1.0}};
-    Ray(m_point1, m_point2);
+    qbVector<double> point1 = qbVector<double>{
+                         std::vector<double>{0.0, 0.0, 0.0}},
+                     point2 = qbVector<double>{std::vector<double>{0.0, 0.0, 1.0}};
+    Ray(point1, point2);
 }
 
 qbRT::Ray::Ray(const qbVector<double> &point1, const qbVector<double> &point2)
