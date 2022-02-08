@@ -1,6 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
-
+#include <memory>
 #include <vector>
 #include <SDL2/SDL.h>
 #include "qbImage.hpp"
@@ -13,14 +13,13 @@ namespace qbRT
     {
     private:
         qbRT::Camera camera;
-        qbRT::ObjSphere testSphere;
-        //a unit sphere centred in the origin for testing.
+        std::vector<std::shared_ptr<qbRT::ObjectBase>> object_list;
+
     public:
         Scene(/* args */);
         ~Scene();
         bool Render(qbImage &outputImage);
     };
-
 }
 
 #endif

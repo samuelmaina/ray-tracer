@@ -10,6 +10,8 @@ qbRT::Scene::Scene()
     camera.SethorzSize(0.25);
     camera.SetAspect(16.0 / 9.0);
     camera.UpdateCameraGeometry();
+
+    object_list.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
 };
 
 qbRT::Scene::~Scene()
@@ -45,26 +47,31 @@ bool qbRT::Scene::Render(qbImage &outputImage)
 
             counter++;
 
+            //test for intersection for all objects in the  scene.
             //generate an array for the pixel.
 
             camera.GenerateRay(normX, normY, cameraRay);
-
-            bool validIntersection = testSphere.TestIntersection(cameraRay, intPoint, localNormal, localColor);
-            if (validIntersection)
+            for (auto obj : object_list)
             {
-                //compute the distance the camera and the point of intersection.
-                //the norm method calculates the distances.
-                double dist = (intPoint - cameraRay.GetPoint1()).norm();
-                if (dist > maxDist || dist < minDist)
+                bool validIntersection = obj->TestIntersection(cameraRay, intPoint, localNormal, localColor);
+                if (validIntersection)
                 {
-                    std::cout << "Point can not be displayed";
-                    exit(1);
+                    //compute the distance the camera and the point of intersection.
+                    //the norm method calculates the distances.
+                    double dist = (intPoint - cameraRay.GetPoint1()).norm();
+                    if (dist > maxDist || dist < minDist)
+                    {
+                        std::cout << "Point can not be displayed";
+                        exit(1);
+                    }
+                    //if  max distance bettween the sphere and the camera is 9.9505, and the lowest will be 9, since the radius is
+                    //1 and the camera is placed at -10 in the y direction.
+                    outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.9405) * 255.0, 0.0, 0.0);
                 }
-                outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.9405) * 255.0, 0.0, 0.0);
-            }
-            else
-            {
-                outputImage.SetPixel(x, y, 0, 0, 0.0);
+                else
+                {
+                    outputImage.SetPixel(x, y, 0, 0, 0.0);
+                }
             }
         }
 
