@@ -125,3 +125,70 @@ qbVector<double> qbRT::GTForm::Apply(const qbVector<double> &inputVector, bool d
         std::vector<double> { result.GetElement(0), result.GetElement(1), result.GetElement(2) }
     }
 }
+
+//must specify that the code is in the namespace since the operator can not acess
+//the member variables of the class. If the namespace is left out , the complier will throw many
+//errors.
+namespace qbRT
+{
+    qbRT::GTForm::operator*(const qbRT
+                            : GTForm &lhs, const qbRT::GTForm &rhs)
+    {
+        //perform the product of the two forward transforms.
+        qbMatrix2<double> fwdResult = lhs.forwardTransform * rhs.forwardTransform;
+
+        qbMatrix2<double> bckResult = fwdResult;
+        bckResult.Inverse();
+
+        //form the final result
+        qbRT::GTForm finalResult(fwdResult, bckResult);
+        return finalResult;
+    }
+}
+
+//overload the = operator
+
+qbRT::GTForm qbRT::GTForm ::operator=(const qbRT::GTForm &rhs)
+{
+
+    //ensure that we are not reassingining.
+    if (this != &rhs)
+    {
+        forwardTransform = rhs.forwardTransform;
+        backwardTransform = rhs.backwardTransform;
+    }
+    return *this;
+}
+
+void qbRT::GTForm::PrintMatrix(bool dirFlag)
+{
+    if (dirFlag)
+    {
+        Print(forwardTransform);
+    }
+    else
+        Print(backwardTransform);
+}
+
+void qbRT::GTForm::Print(const qbMatrix2<double> &matrix)
+{
+    int nRows = matrix.GetNumRows();
+    int nCols = matrix.GetNumCols();
+    for (int row = 0; row < nRows; ++row)
+    {
+        for (int col = 0; col < nCols; ++col)
+        {
+            std::cout << std::fixed << std::precision(3) << matrix.GetElement(row, col) << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void qbRT::GTForm::PrintVector(const qbVector<double> &inputVector)
+{
+    int nRows = inputVector.GetNumDims();
+    for (int row = 0; row < nRows; ++row)
+    {
+        std::cout << std::fixed << std::precision(3) << inputVector.GetElement(row) << "\n";
+    }
+}
