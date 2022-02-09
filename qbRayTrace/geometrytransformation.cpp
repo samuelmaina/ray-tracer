@@ -87,3 +87,41 @@ qbVector<double> qbRT::GTForm::GetBackward()
 {
     return backwardTransform;
 }
+
+qbRT::Ray qbBT::GTForm::Apply(const qbBT::Ray &inputRay, bool dirFlag)
+{
+
+    if (dirFlag)
+    {
+        return qbRT::Ray::Ray(this->Apply(inputRay.GetPoint1(), qbRT::FWDTFORM), this->Apply(inputRay.GetPoint2(), qbRT::FWDTFORM));
+    }
+
+    return qbRT::Ray::Ray(this->Apply(inputRay.GetPoint1(), qbRT::BCKTFORM), this->Apply(inputRay.GetPoint2(), qbRT::FWDTFORM));
+}
+
+qbVector<double> qbRT::GTForm::Apply(const qbVector<double> &inputVector, bool dirFlag)
+{
+    //convert inputVector to a 4-elment vector by adding a 1.0
+
+    std::Vector<double> tempData = {inputVector.GetElement(0),
+                                    inputVector.GetElment(1),
+                                    inputVector.GetElment(2),
+                                    1.0};
+    qbVector<double> tempvector{tempData};
+
+    qbVector<double> result;
+
+    if (dirFlag)
+    {
+        result = forwardTransform * tempVector;
+    }
+    else
+    {
+        result = backwardTransform * tempVector;
+    }
+
+    return qbVector<double>
+    {
+        std::vector<double> { result.GetElement(0), result.GetElement(1), result.GetElement(2) }
+    }
+}
