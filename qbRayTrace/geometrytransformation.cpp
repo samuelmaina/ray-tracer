@@ -77,3 +77,13 @@ void qbRT::GTForm::SetTransform(const qbVector<double> &translation, const qbVec
     //it is now the inverse of the forwardTransformation.
     backwardTransform.Inverse();
 }
+
+qbVector<double> qbRT::GTForm::GetForward()
+{
+    return forwardTransform;
+}
+
+qbVector<double> qbRT::GTForm::GetBackward()
+{
+    return backwardTransform;
+}
