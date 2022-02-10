@@ -23,22 +23,24 @@ namespace qbRT
         GTForm();
         ~GTForm();
         GTForm(const qbMatrix2<double> &fwd, const qbMatrix2<double> &bck);
-        SetTransform(const qbVector<double> &translation,
-                     const qbVector<double> &rotation,
-                     const qbVector<double> &scale);
+        void SetTransform(const qbVector<double> &translation,
+                          const qbVector<double> &rotation,
+                          const qbVector<double> &scale);
 
         //function that will return the transform matrices.
         qbMatrix2<double> GetForward();
         qbMatrix2<double> GetBackward();
 
         //apply a transformation according to specicfic direction.
-        qbRT::Ray Apply(const qbRay &inputRay, bool dirFlag);
+        qbRT::Ray Apply(const qbRT::Ray &inputRay, bool dirFlag);
 
         //overload the Apply function so that it handles vectors  differently from rays.
         qbVector<double> Apply(const qbVector<double> &inputVector, bool dirFlag);
 
-        friend GTForm operator*(const qbRT::GTForm &lhs, cosnt qbRT::GTForm &rhs);
+        //operator overloads.
+        friend GTForm operator*(const qbRT::GTForm &lhs, const qbRT::GTForm &rhs);
         GTForm operator=(const GTForm &rhs);
+
         //used mostly for debugging to show the computed matrix and the input vector or the output vector.
         void PrintMatrix(bool dirFlag);
         static void PrintVector(const qbVector<double> &vector);

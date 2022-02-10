@@ -13,7 +13,7 @@ qbRT::ObjectBase::~ObjectBase()
 
 void qbRT::ObjectBase::SetTranformMatrix(const qbRT::GTForm &transformation)
 {
-    this->trnfrmMatrix = transformation;
+    trnfrmMatrix = transformation;
 }
 
 bool qbRT::ObjectBase::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &intPoint, qbVector<double> &localNormal, qbVector<double> &localColor)

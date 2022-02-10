@@ -42,24 +42,24 @@ void qbRT::GTForm::SetTransform(const qbVector<double> &translation, const qbVec
     //popluate the matrices with the appropriate values.
     //first start with the translation matrix.
     translationMatrix.SetElement(0, 3, translation.GetElement(0));
-    translationMatrix.SetELement(1, 3, translation.GetElement(1));
-    translationMatrix.SetElement(2, 3, translation.GetELement(2));
+    translationMatrix.SetElement(1, 3, translation.GetElement(1));
+    translationMatrix.SetElement(2, 3, translation.GetElement(2));
 
     //Rotation Matrices.
     double zAngle = rotation.GetElement(2);
-    rotationMatrixZ.SetlElement(0, 0, cos(zAngle));
+    rotationMatrixZ.SetElement(0, 0, cos(zAngle));
     rotationMatrixZ.SetElement(0, 1, -sin(zAngle));
     rotationMatrixZ.SetElement(1, 0, sin(zAngle));
     rotationMatrixZ.SetElement(1, 1, cos(zAngle));
 
     double yAngle = rotation.GetElement(1);
-    rotationMatrixY.SetlElement(0, 0, cos(yAngle));
+    rotationMatrixY.SetElement(0, 0, cos(yAngle));
     rotationMatrixY.SetElement(0, 2, sin(yAngle));
     rotationMatrixY.SetElement(2, 0, -sin(yAngle));
     rotationMatrixY.SetElement(2, 2, cos(yAngle));
 
     double xAngle = rotation.GetElement(0);
-    rotationMatrixZ.SetlElement(1, 1, cos(xAngle));
+    rotationMatrixZ.SetElement(1, 1, cos(xAngle));
     rotationMatrixZ.SetElement(1, 2, -sin(xAngle));
     rotationMatrixZ.SetElement(2, 1, sin(xAngle));
     rotationMatrixZ.SetElement(2, 2, cos(xAngle));
@@ -73,41 +73,40 @@ void qbRT::GTForm::SetTransform(const qbVector<double> &translation, const qbVec
     //asumption that by default the use is making a forward transformation.
     forwardTransform = translationMatrix * scaleMatrix * rotationMatrixX * rotationMatrixY * rotationMatrixZ;
 
-    backwardTransform = forwarTransform;
+    backwardTransform = forwardTransform;
     //it is now the inverse of the forwardTransformation.
     backwardTransform.Inverse();
 }
 
-qbVector<double> qbRT::GTForm::GetForward()
+qbMatrix2<double> qbRT::GTForm::GetForward()
 {
     return forwardTransform;
 }
 
-qbVector<double> qbRT::GTForm::GetBackward()
+qbMatrix2<double> qbRT::GTForm::GetBackward()
 {
     return backwardTransform;
 }
 
-qbRT::Ray qbBT::GTForm::Apply(const qbBT::Ray &inputRay, bool dirFlag)
+qbRT::Ray qbRT::GTForm::Apply(const qbRT::Ray &inputRay, bool dirFlag)
 {
 
     if (dirFlag)
     {
-        return qbRT::Ray::Ray(this->Apply(inputRay.GetPoint1(), qbRT::FWDTFORM), this->Apply(inputRay.GetPoint2(), qbRT::FWDTFORM));
+        return qbRT::Ray(this->Apply(inputRay.GetPoint1(), qbRT::FWDTFORM), this->Apply(inputRay.GetPoint2(), qbRT::FWDTFORM));
     }
-
-    return qbRT::Ray::Ray(this->Apply(inputRay.GetPoint1(), qbRT::BCKTFORM), this->Apply(inputRay.GetPoint2(), qbRT::FWDTFORM));
+    return qbRT::Ray(this->Apply(inputRay.GetPoint1(), qbRT::BCKTFORM), this->Apply(inputRay.GetPoint2(), qbRT::BCKTFORM));
 }
 
 qbVector<double> qbRT::GTForm::Apply(const qbVector<double> &inputVector, bool dirFlag)
 {
     //convert inputVector to a 4-elment vector by adding a 1.0
 
-    std::Vector<double> tempData = {inputVector.GetElement(0),
-                                    inputVector.GetElment(1),
-                                    inputVector.GetElment(2),
+    std::vector<double> tempData = {inputVector.GetElement(0),
+                                    inputVector.GetElement(1),
+                                    inputVector.GetElement(2),
                                     1.0};
-    qbVector<double> tempvector{tempData};
+    qbVector<double> tempVector{tempData};
 
     qbVector<double> result;
 
@@ -120,10 +119,8 @@ qbVector<double> qbRT::GTForm::Apply(const qbVector<double> &inputVector, bool d
         result = backwardTransform * tempVector;
     }
 
-    return qbVector<double>
-    {
-        std::vector<double> { result.GetElement(0), result.GetElement(1), result.GetElement(2) }
-    }
+    return qbVector<double>{
+        std::vector<double>{result.GetElement(0), result.GetElement(1), result.GetElement(2)}};
 }
 
 //must specify that the code is in the namespace since the operator can not acess
@@ -131,8 +128,7 @@ qbVector<double> qbRT::GTForm::Apply(const qbVector<double> &inputVector, bool d
 //errors.
 namespace qbRT
 {
-    qbRT::GTForm::operator*(const qbRT
-                            : GTForm &lhs, const qbRT::GTForm &rhs)
+    qbRT::GTForm operator*(const qbRT::GTForm &lhs, const qbRT::GTForm &rhs)
     {
         //perform the product of the two forward transforms.
         qbMatrix2<double> fwdResult = lhs.forwardTransform * rhs.forwardTransform;
@@ -164,13 +160,13 @@ void qbRT::GTForm::PrintMatrix(bool dirFlag)
 {
     if (dirFlag)
     {
-        Print(forwardTransform);
+        print(forwardTransform);
     }
     else
-        Print(backwardTransform);
+        print(backwardTransform);
 }
 
-void qbRT::GTForm::Print(const qbMatrix2<double> &matrix)
+void qbRT::GTForm::print(const qbMatrix2<double> &matrix)
 {
     int nRows = matrix.GetNumRows();
     int nCols = matrix.GetNumCols();
@@ -178,7 +174,7 @@ void qbRT::GTForm::Print(const qbMatrix2<double> &matrix)
     {
         for (int col = 0; col < nCols; ++col)
         {
-            std::cout << std::fixed << std::precision(3) << matrix.GetElement(row, col) << " ";
+            std::cout << std::fixed << std::setprecision(3) << matrix.GetElement(row, col) << " ";
         }
         std::cout << std::endl;
     }
@@ -189,6 +185,6 @@ void qbRT::GTForm::PrintVector(const qbVector<double> &inputVector)
     int nRows = inputVector.GetNumDims();
     for (int row = 0; row < nRows; ++row)
     {
-        std::cout << std::fixed << std::precision(3) << inputVector.GetElement(row) << "\n";
+        std::cout << std::fixed << std::setprecision(3) << inputVector.GetElement(row) << "\n";
     }
 }

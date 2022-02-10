@@ -14,7 +14,9 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double
     //copy the ray and perform the backward transform.
 
     //the castRay is in the 3D world hence we need to convert it to the local scale of the sphere, by doing the backward transformation,
+
     qbRT::Ray bckRay = trnfrmMatrix.Apply(castRay, qbRT::BCKTFORM);
+
     //First the solve the quadratic equation  in which the determinant  is greater than 0.
     //compute the values of a, b and c.
 
@@ -56,18 +58,18 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double
         intPoint = trnfrmMatrix.Apply(pointOfIntersection, qbRT::FWDTFORM);
 
         //compute the local normal again.
-        qbVector<double> objOrigin = qbVector<double>{
-            std::vector<double>{0.0, 0.0, 0.0}};
+        qbVector<double>
+            objOrigin = qbVector<double>{
+                std::vector<double>{0.0, 0.0, 0.0}};
 
         qbVector<double> newOrigin = trnfrmMatrix.Apply(objOrigin, qbRT::FWDTFORM);
         localNormal = intPoint - newOrigin;
         localNormal.Normalize();
 
-        //compute the local normal.
-        localNormal = intPoint;
-        localNormal.Normalize();
+        localColor = baseColor;
 
         return true;
     }
+
     return false;
 }

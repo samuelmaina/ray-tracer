@@ -6,9 +6,10 @@ qbRT::PointLight::PointLight()
 {
     color = qbVector<double>{
         std::vector<double>{1.0, 1.0, 1.0}};
+    intensity = 1.0;
 }
 
-qbRT::LightBase::~LightBase()
+qbRT::PointLight::~PointLight()
 {
 }
 bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, const qbVector<double> &localNormal, const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList, const std::shared_ptr<qbRT::ObjectBase> &currentObject, qbVector<double> &color, double &intensity)
@@ -35,7 +36,7 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
     else
     {
         color = this->color;
-        intensity = this->intesity * (1.0 - (angle / angle_ninety));
+        intensity = this->intensity * (1.0 - (angle / angle_ninety));
         return true;
     }
 }
