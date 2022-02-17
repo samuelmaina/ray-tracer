@@ -17,7 +17,7 @@ bool CApp::OnInit()
         return false;
     }
 
-    double factor = 1;
+    double factor = 0.75;
 
     int xLength = static_cast<int>(1280 * factor), yLength = static_cast<int>(720 * factor);
 

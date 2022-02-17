@@ -3,9 +3,10 @@
 #include <memory>
 #include <vector>
 #include <SDL2/SDL.h>
-#include "qbImage.hpp"
 #include "camera.hpp"
-#include "objectbase.hpp"
+#include "qbImage.hpp"
+#include "objplane.hpp"
+#include "objsphere.hpp"
 #include "pointlight.hpp"
 
 namespace qbRT

@@ -2,11 +2,10 @@
 #define OBJPLANE_H
 
 #include "objectbase.hpp"
-#include "geometrytransformation.hpp"
 
 namespace qbRT
 {
-    class ObjPlane : public ObjectBase
+    class ObjPlane : public qbRT::ObjectBase
     {
 
     public:

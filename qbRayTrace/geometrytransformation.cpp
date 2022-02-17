@@ -128,7 +128,7 @@ qbVector<double> qbRT::GTForm::Apply(const qbVector<double> &inputVector, bool d
 //errors.
 namespace qbRT
 {
-    qbRT::GTForm operator*(const qbRT::GTForm &lhs, const qbRT::GTForm &rhs)
+    GTForm operator*(const qbRT::GTForm &lhs, const qbRT::GTForm &rhs)
     {
         //perform the product of the two forward transforms.
         qbMatrix2<double> fwdResult = lhs.forwardTransform * rhs.forwardTransform;
