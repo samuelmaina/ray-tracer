@@ -2,7 +2,7 @@
 #define RAY_H
 
 #include "./qbLinAlg/qbVector.h"
-#include "vectormanipulators.hpp"
+#include "./utils/vectormanipulators.hpp"
 
 namespace qbRT
 {

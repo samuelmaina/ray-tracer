@@ -2,7 +2,7 @@
 #define POINTLIGHT_H
 
 #include "lightbase.hpp"
-#include "vectormanipulators.hpp"
+#include "../utils/vectormanipulators.hpp"
 
 namespace qbRT
 {

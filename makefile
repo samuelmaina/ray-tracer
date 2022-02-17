@@ -4,13 +4,19 @@ linkTarget= qbRay
 #define the libraries that we need
 LIBS= -LIBS2
 
+SDL2_PATHS= C:\Users\SAM\Desktop\folders\academics_prac\Projects\Ray-Tracing-\SDL2
+
 #define any flags. if working with cygwin in windows don't put the whole path in to the path.
-CFLAGS= -std=c++20 -Ofast -I"C:\Users\SAM\Desktop\folders\academics_prac\Projects\Ray-Tracing-\SDL2\include" -L"C:\Users\SAM\Desktop\folders\academics_prac\Projects\Ray-Tracing-\SDL2\lib" -Wall -lmingw32 -lSDL2main -lSDL2
+CFLAGS= -std=c++20 -Ofast -I"$(SDL2_PATHS)\include" -L"$(SDL2_PATHS)\lib" -Wall -lmingw32 -lSDL2main -lSDL2
 
 #define the object files that we need to use.
 objects= main.o\
 		 CApp.o\
-		 $(patsubst %.cpp, %.o, $(wildcard ./qbRayTrace/*.cpp))
+		 $(patsubst %.cpp, %.o, $(wildcard ./qbRayTrace/*.cpp))\
+		 $(patsubst %.cpp, %.o, $(wildcard ./qbRayTrace/lights/*.cpp))\
+		 $(patsubst %.cpp, %.o, $(wildcard ./qbRayTrace/primitives/*.cpp))\
+		 $(patsubst %.cpp, %.o, $(wildcard ./qbRayTrace/materials/*.cpp))\
+		 $(patsubst %.cpp, %.o, $(wildcard ./qbRayTrace/utils/*.cpp))\
 
 #Define the rebuildables
 rebuildables= $(objects) $(linkTarget)

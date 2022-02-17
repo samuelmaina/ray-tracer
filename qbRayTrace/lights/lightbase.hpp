@@ -1,10 +1,10 @@
 #ifndef LIGHTBASE_H
 #define LIGHTBASE_H
 #include <memory>
-#include "./qbLinAlg/qbVector.h"
-#include "vectormanipulators.hpp"
-#include "ray.hpp"
-#include "objectbase.hpp"
+#include "../qbLinAlg/qbVector.h"
+#include "../utils/vectormanipulators.hpp"
+#include "../ray.hpp"
+#include "../materials/objectbase.hpp"
 
 namespace qbRT
 {

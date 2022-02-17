@@ -1,8 +1,8 @@
 #ifndef OBJPLANE_H
 #define OBJPLANE_H
 
-#include "objectbase.hpp"
-#include "vectormanipulators.hpp"
+#include "../Materials/objectbase.hpp"
+#include "../utils/vectormanipulators.hpp"
 
 namespace qbRT
 {

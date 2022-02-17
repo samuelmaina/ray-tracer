@@ -1,9 +1,9 @@
 #ifndef OBJECTBASE_H
 #define OBJECTBASE_H
 
-#include "ray.hpp"
-#include "./qbLinAlg/qbVector.h"
-#include "geometrytransformation.hpp"
+#include "../ray.hpp"
+#include "../qbLinAlg/qbVector.h"
+#include "../geometrytransformation.hpp"
 
 namespace qbRT
 {

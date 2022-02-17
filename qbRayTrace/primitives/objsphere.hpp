@@ -1,8 +1,8 @@
 #ifndef OBJSPHERE_H
 #define OBJSPHERE_H
 
-#include "objectbase.hpp"
-#include "vectormanipulators.hpp"
+#include "../materials/objectbase.hpp"
+#include "../utils/vectormanipulators.hpp"
 
 namespace qbRT
 {

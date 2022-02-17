@@ -5,9 +5,9 @@
 #include <SDL2/SDL.h>
 #include "camera.hpp"
 #include "qbImage.hpp"
-#include "objplane.hpp"
-#include "objsphere.hpp"
-#include "pointlight.hpp"
+#include "./primitives/objplane.hpp"
+#include "./primitives/objsphere.hpp"
+#include "./lights/pointlight.hpp"
 
 namespace qbRT
 {

@@ -3,7 +3,7 @@
 #include "math.h"
 #include "./qbLinAlg/qbVector.h"
 #include "ray.hpp"
-#include "vectormanipulators.hpp"
+#include "./utils/vectormanipulators.hpp"
 namespace qbRT
 {
     class Camera

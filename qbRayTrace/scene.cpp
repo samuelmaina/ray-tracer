@@ -12,7 +12,7 @@ qbRT::Scene::Scene()
 {
     int noOfObjects = 3;
     int noOfPlanes = 1;
-    int noOfLights = 1;
+    int noOfLights = 3;
 
     // set the camera.
     camera.SetPosition(0.0, -10.0, -1.0);
@@ -45,13 +45,20 @@ qbRT::Scene::Scene()
 
     // set the base colors for the objects and the plane.
     objectList.at(0)->SetColor(0.25, 0.5, 0.8);
-    objectList.at(1)->SetColor(0.0, 0.0, 1.0);
+    objectList.at(1)->SetColor(1.0, 0.5, 1.0);
     objectList.at(2)->SetColor(1.0, 0.8, 0.0);
+    // set the plane to gray.
     objectList.at(3)->SetColor(0.5, 0.5, 0.5);
 
     // the light
     lightList.at(0)->SetLocation(5.0, -10.0, -5.0);
     lightList.at(0)->SetColor(1.0, 1.0, 1.0);
+
+    lightList.at(1)->SetLocation(-5.0, -10.0, -5.0);
+    lightList.at(1)->SetColor(1.0, 0.0, 0.0);
+
+    lightList.at(2)->SetLocation(0.0, -10.0, -5.0);
+    lightList.at(2)->SetColor(0.0, 1.0, 0.0);
 };
 
 qbRT::Scene::~Scene()
