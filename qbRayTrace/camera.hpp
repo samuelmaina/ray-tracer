@@ -1,7 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#include "math.h"
 #include "./qbLinAlg/qbVector.h"
 #include "ray.hpp"
+#include "vectormanipulators.hpp"
 namespace qbRT
 {
     class Camera
@@ -9,10 +11,10 @@ namespace qbRT
     private:
     public:
         Camera();
-        //function to set the camera parameter
-        void SetPosition(const qbVector<double> &newPosition);
-        void SetLookAt(const qbVector<double> &newLookAt);
-        void SetUp(const qbVector<double> &upVector);
+        // function to set the camera parameter
+        void SetPosition(double x, double y, double z);
+        void SetLookAt(double x, double y, double z);
+        void SetUp(double x, double y, double z);
         void SetLength(double newLength);
         void SetAspect(double newAspect);
         void SethorzSize(double newSize);
@@ -27,8 +29,8 @@ namespace qbRT
         double GetLength();
         double GetHorizontalSize();
 
-        //the camera array will be used as output, but the function will return true
-        //if it was able to create an ray.
+        // the camera array will be used as output, but the function will return true
+        // if it was able to create an ray.
         bool GenerateRay(float proScreenX, float proScreenY, qbRT::Ray &cameraRay);
         void UpdateCameraGeometry();
 

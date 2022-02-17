@@ -9,3 +9,12 @@ bool qbRT::LightBase::ComputeIllumination(const qbVector<double> &intPoint, cons
 {
     return false;
 }
+
+void qbRT::LightBase::SetColor(const double r, const double g, const double b)
+{
+    color = ConstructVector(r, g, b);
+}
+void qbRT::LightBase::SetLocation(const double x, const double y, const double z)
+{
+    location = ConstructVector(x, y, z);
+}

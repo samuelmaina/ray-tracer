@@ -2,28 +2,27 @@
 
 qbRT::Ray::Ray()
 {
-    qbVector<double> point1 = qbVector<double>{
-                         std::vector<double>{0.0, 0.0, 0.0}},
-                     point2 = qbVector<double>{std::vector<double>{0.0, 0.0, 1.0}};
+    qbVector<double> point1 = ConstructVector(0.0, 0.0, 0.0),
+                     point2 = ConstructVector(0.0, 0.0, 1.0);
     Ray(point1, point2);
 }
 
 qbRT::Ray::Ray(const qbVector<double> &point1, const qbVector<double> &point2)
 {
-    m_point1 = point1;
-    m_point2 = point2;
-    m_lab = m_point2 - m_point1;
+    this->point1 = point1;
+    this->point2 = point2;
+    ray_vector = this->point2 - this->point1;
 }
 qbVector<double> qbRT::Ray::GetPoint1() const
 {
-    return m_point1;
+    return point1;
 }
 qbVector<double> qbRT::Ray::GetPoint2() const
 {
-    return m_point2;
+    return point2;
 }
 
 qbVector<double> qbRT::Ray::GetRayVector() const
 {
-    return m_lab;
+    return ray_vector;
 }

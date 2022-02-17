@@ -2,6 +2,7 @@
 #define RAY_H
 
 #include "./qbLinAlg/qbVector.h"
+#include "vectormanipulators.hpp"
 
 namespace qbRT
 {
@@ -15,9 +16,9 @@ namespace qbRT
         qbVector<double> GetRayVector() const;
 
     private:
-        qbVector<double> m_point1{3};
-        qbVector<double> m_point2{3};
-        qbVector<double> m_lab{3};
+        qbVector<double> point1{3};
+        qbVector<double> point2{3};
+        qbVector<double> ray_vector{3};
     };
 };
 #endif

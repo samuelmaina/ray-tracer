@@ -2,6 +2,7 @@
 #define OBJPLANE_H
 
 #include "objectbase.hpp"
+#include "vectormanipulators.hpp"
 
 namespace qbRT
 {

@@ -4,8 +4,7 @@
 #define _USE_MATH_DEFINES
 qbRT::PointLight::PointLight()
 {
-    color = qbVector<double>{
-        std::vector<double>{1.0, 1.0, 1.0}};
+    color = ConstructVector(1.0, 1.0, 1.0);
     intensity = 1.0;
 }
 
@@ -46,7 +45,7 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
         // Since the normal and the lightVector are assumed to be unit vector their
         // produce will be just be 1, which will make it easy for us to compute the
         // angle between ray and the normal.
-        double angle = acos(qbVector<double>::dot(localNormal, lightDir));
+        double angle = acos(DotProduct(localNormal, lightDir));
 
         // if the normal is point away from the  light source, then there is no illumination.
         double angle_ninety = acos(0.0);

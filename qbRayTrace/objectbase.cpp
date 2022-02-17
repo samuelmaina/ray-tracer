@@ -25,3 +25,8 @@ bool qbRT::ObjectBase::CloseEnough(const double f1, const double f2)
 {
     return fabs(f1 - f2) < EPSILON;
 }
+
+void qbRT::ObjectBase::SetColor(const double r, const double g, const double b)
+{
+    baseColor = ConstructVector(r, g, b);
+}

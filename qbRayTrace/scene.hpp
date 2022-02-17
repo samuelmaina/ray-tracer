@@ -22,6 +22,9 @@ namespace qbRT
         Scene(/* args */);
         ~Scene();
         bool Render(qbImage &outputImage);
+        void AddNObjects(int no);
+        void AddNLights(int no);
+        void AddNPlanes(int no);
     };
 }
 
