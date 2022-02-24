@@ -1,0 +1,4 @@
+#ifndef SIMPLEMATERIAL_H
+#define SIMPLEMATERIAL_H
+
+#endif
