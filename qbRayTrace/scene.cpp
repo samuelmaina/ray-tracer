@@ -3,9 +3,6 @@
 // where T represent translation, R rotation and S scale
 void setTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz);
 
-// used to construct qbVector of 3 doubles a,b and c
-qbVector<double> constructQbVector(double a, double b, double c);
-
 double getFactor(int size);
 
 qbRT::Scene::Scene()
@@ -13,6 +10,7 @@ qbRT::Scene::Scene()
     int noOfObjects = 3;
     int noOfPlanes = 1;
     int noOfLights = 3;
+    int noOfMaterials = 1;
 
     // set the camera.
     camera.SetPosition(0.0, -10.0, -1.0);
@@ -22,12 +20,18 @@ qbRT::Scene::Scene()
     camera.SetAspect(16.0 / 9.0);
     camera.UpdateCameraGeometry();
 
-    // set the objects, planes and lights.
+    // set the objects, planes, materials and lights.
     AddNObjects(noOfObjects);
 
     AddNPlanes(noOfPlanes);
 
     AddNLights(noOfLights);
+
+    AddNMaterials(noOfMaterials);
+
+    materialList.at(0)->SetColor(0.25, 0.5, 0.8);
+    materialList.at(0)->SetReflectivity(0.5);
+    materialList.at(0)->SetShininess(10.0);
 
     // the transformation matrix for the three objects and one plane
     qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
@@ -45,12 +49,15 @@ qbRT::Scene::Scene()
 
     // set the base colors for the objects and the plane.
     objectList.at(0)->SetColor(0.25, 0.5, 0.8);
-    objectList.at(1)->SetColor(1.0, 0.5, 1.0);
+
+    objectList.at(0)->AssignMaterial(materialList.at(0))
+        objectList.at(1)
+            ->SetColor(1.0, 0.5, 1.0);
     objectList.at(2)->SetColor(1.0, 0.8, 0.0);
     // set the plane to gray.
     objectList.at(3)->SetColor(0.5, 0.5, 0.5);
 
-    // the light
+    // the lights
     lightList.at(0)->SetLocation(5.0, -10.0, -5.0);
     lightList.at(0)->SetColor(1.0, 1.0, 1.0);
 
@@ -69,7 +76,6 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     int xSize = outputImage.GetXSize();
     int ySize = outputImage.GetYSize();
 
-    // loop over every pixel of each image.
     qbRT::Ray cameraRay;
     qbVector<double> intPoint{3};
     qbVector<double> localNormal{3};
@@ -100,42 +106,28 @@ bool qbRT::Scene::Render(qbImage &outputImage)
             camera.GenerateRay(normX, normY, cameraRay);
 
             std::shared_ptr<qbRT::ObjectBase> closestObject;
-            qbVector<double> closestIntPoint{3};
-            qbVector<double> closestLocalNormal{3};
-            qbVector<double> closestLocalColor{3};
+            qbVector<double> closestIntPoint{3}, closestLocalNormal{3}, closestLocalColor{3};
 
-            double minDist = 1e6;
-            double intFound = false;
+            bool intFound = CastRay(cameraRay, closestObject, closestIntPoint, closestLocalNormal, closestLocalColor);
 
-            for (auto obj : objectList)
+            if (intFound)
             {
-                bool validIntersection = obj->TestIntersection(cameraRay, intPoint, localNormal, localColor);
-                if (validIntersection)
+
+                // first check if the current object has a material.
+                if (closestObject->hasMaterial)
                 {
+                    // use the material to compute the color.
+                    qbVector<double> color = closestObject->material->ComputeColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, cameraRay);
 
-                    // set that there is an intersection that .
-                    intFound = true;
-
-                    // compute the distance between intersection point and the camera.
-                    double dist = (intPoint - cameraRay.GetPoint1()).norm();
-
-                    /**
-                     * Store the current object that is closest to the camera, so that it can be displayed first.
-                     *
-                     */
-
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        closestObject = obj;
-                        closestIntPoint = intPoint;
-                        closestLocalNormal = localNormal;
-                        closestLocalColor = localColor;
-                    }
+                    outputImage.SetPixel(x, y, color.GetElement(0), color.GetElement(1), color.GetElement(2));
                 }
-                if (intFound)
+                else
                 {
+
+                    qbVector<double> matColor = qbRT::MaterialBase::ComputeDiffuseColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, closestObject->baseColor);
                     // compute the intensity of il lumination of the point of intersection.
+                    outputImage.SetPixel(x, y, matColor.GetElement(0), matColor.GetElement(1), matColor.GetElement(2));
+
                     double intensity;
                     qbVector<double> color{3};
                     double red = 0.0, green = 0.0, blue = 0.0;
@@ -165,6 +157,43 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     return true;
 }
 
+bool qbRT::Scene::CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> &closestObject, qbVector<double> &closestIntPoint, qbVector<double> &closestLocalNormal, qbVector<double> &closestLocalColor)
+{
+    qbVector<double> intPoint{3}, localNormal{3}, localColor{3};
+
+    double minDist = 1e6;
+    double intFound = false;
+
+    for (auto obj : objectList)
+    {
+        bool validIntersection = obj->TestIntersection(castRay, intPoint, localNormal, localColor);
+        if (validIntersection)
+        {
+
+            // set that there is an intersection that .
+            intFound = true;
+
+            // compute the distance between intersection point and the camera.
+            double dist = (intPoint - castRay.GetPoint1()).norm();
+
+            /**
+             * Store the current object that is closest to the camera, so that it can be displayed first.
+             *
+             */
+
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closestObject = obj;
+                closestIntPoint = intPoint;
+                closestLocalNormal = localNormal;
+                closestLocalColor = localColor;
+            }
+        }
+    }
+    return intFound;
+}
+
 void qbRT::Scene::AddNObjects(int no)
 {
     for (int i = 0; i < no; ++i)
@@ -181,6 +210,14 @@ void qbRT::Scene::AddNPlanes(int no)
     }
 }
 
+void qbRT::Scene::AddNMaterials(int no)
+{
+    for (int i = 0; i < no; ++i)
+    {
+        materialList.push_back(std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial()));
+    }
+}
+
 void qbRT::Scene::AddNLights(int no)
 {
     for (int i = 0; i < no; ++i)
@@ -188,6 +225,7 @@ void qbRT::Scene::AddNLights(int no)
         lightList.push_back(std::make_shared<qbRT::PointLight>(qbRT::PointLight()));
     }
 }
+
 // generate a factor between 0, and 2,
 double getFactor(int size)
 {
@@ -196,11 +234,5 @@ double getFactor(int size)
 
 void setTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz)
 {
-    matrix.SetTransform(constructQbVector(Tx, Ty, Tz), constructQbVector(Rx, Ry, Rz), constructQbVector(Sx, Sy, Sz));
-}
-
-qbVector<double> constructQbVector(double a, double b, double c)
-{
-    return qbVector<double>{
-        std::vector<double>{a, b, c}};
+    matrix.SetTransform(ConstructVector(Tx, Ty, Tz), ConstructVector(Rx, Ry, Rz), ConstructVector(Sx, Sy, Sz));
 }

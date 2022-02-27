@@ -4,8 +4,23 @@ qbRT::SimpleMaterial::SimpleMaterial(){};
 qbRT::SimpleMaterial::~SimpleMaterial()
 {
 }
+
+void qbRT::SimpleMaterial::SetColor(double red, double green, double blue)
+{
+    baseColor = ConstructVector(red, green, blue);
+}
+
+void qbRT::SimpleMaterial::SetReflectivity(double ref)
+{
+    reflectivity = ref;
+}
+void qbRT::SimpleMaterial::SetShininess(double shineVal)
+{
+    shininess = shineVal;
+}
+
 qbVector<double> qbRT::SimpleMaterial::ComputeColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                    const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
+                                                    const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
                                                     const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                                     const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                     const qbRT::Ray &cameraRay)
@@ -25,7 +40,7 @@ qbVector<double> qbRT::SimpleMaterial::ComputeColor(const std::vector<std::share
 
 // Function to calculate the specular.
 qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                       const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
+                                                       const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
                                                        const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                        const qbRT::Ray &cameraRay)
 {
@@ -75,11 +90,7 @@ qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::sh
                 intensity = reflectivity * std::pow(dotProduct, shininess);
             }
         }
-        qbVector<double> lightColor = light->color;
-        red += lightColor.GetElement(0) * intensity;
-        green += lightColor.GetElement(1) * intensity;
-        blue += lightColor.GetElement(2) * intensity;
+        ComputeColorIntensity(light->color, red, green, blue, intensity);
     }
+    return ConstructVector(red, green, blue);
 }
-
-// Function to  compute the specular highlights

@@ -1,12 +1,12 @@
 #ifndef OBJSPHERE_H
 #define OBJSPHERE_H
 
-#include "../materials/objectbase.hpp"
+#include "./objectbase.hpp"
 #include "../utils/vectormanipulators.hpp"
 
 namespace qbRT
 {
-    class ObjSphere : public qbRT::ObjectBase
+    class ObjSphere : public ObjectBase
     {
     public:
         // used to create a unit(radius 1) from the origin.

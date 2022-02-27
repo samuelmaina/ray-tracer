@@ -2,9 +2,10 @@
 #define MATERRIALBASE_H
 
 #include "memory"
-#include "./objectbase.hpp"
-#include "../lights/lightbase.hpp"
-#include "./qbLinAlg/qbVector.h"
+#include "../primitives/objectbase.hpp"
+#include "../lights/pointlight.hpp"
+#include "../qbLinAlg/qbVector.h"
+#include "../utils/mathUtils.hpp"
 
 namespace qbRT
 {
@@ -17,14 +18,14 @@ namespace qbRT
         // function that will be used to return the current color of the material
 
         virtual qbVector<double> ComputeColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                              const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
+                                              const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
                                               const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                               const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                               const qbRT::Ray &cameraRay);
 
         // function to calculate the diffussion color
         static qbVector<double> ComputeDiffuseColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                    const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
+                                                    const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
                                                     const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                                     const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                     const qbVector<double> &baseColor);

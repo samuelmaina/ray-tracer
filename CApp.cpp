@@ -64,7 +64,7 @@ void CApp::OnEvent(SDL_Event *event)
 }
 void CApp::OnRender()
 {
-    //set the default colour that will be displayed to the screen.
+    // set the default colour that will be displayed to the screen.
     SDL_SetRenderDrawColor(pRenderer, initColorAndAlpha[0], initColorAndAlpha[1], initColorAndAlpha[2], initColorAndAlpha[3]);
     SDL_RenderClear(pRenderer);
     m_scene.Render(m_image);
@@ -73,7 +73,7 @@ void CApp::OnRender()
 }
 void CApp::OnExit()
 {
-    //clear the SDL2 stuff
+    // clear the SDL2 stuff
     SDL_DestroyRenderer(pRenderer);
     SDL_DestroyWindow(pWindow);
     pWindow = NULL;
