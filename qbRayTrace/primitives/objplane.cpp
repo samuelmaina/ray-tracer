@@ -8,16 +8,15 @@ qbRT::ObjPlane::~ObjPlane()
 {
 }
 
-bool qbRT::ObjPlane::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &intPoint, qbVector<double> &localNormal, qbVector<double> &localColor)
+bool qbRT::ObjPlane::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &intPoint,
+                                      qbVector<double> &localNormal, qbVector<double> &localColor)
 {
 
     // create a new backward transformed ray from the cast ray.
     qbRT::Ray bckRay = trnfrmMatrix.Apply(castRay, qbRT::BCKTFORM);
 
     // get the ray vector and normalize it.
-    qbVector<double> k = bckRay.GetRayVector();
-
-    qbVector<double> point1 = bckRay.GetPoint1();
+    qbVector<double> k = bckRay.GetRayVector(), point1 = bckRay.GetPoint1();
     k.Normalize();
 
     // check if there is an intersection , i.e. if the castRay is not parallel to
@@ -46,9 +45,9 @@ bool qbRT::ObjPlane::TestIntersection(const qbRT::Ray &castRay, qbVector<double>
                 intPoint = trnfrmMatrix.Apply(poi, qbRT::FWDTFORM);
 
                 // compute the local normal.
-                qbVector<double> localOrigin = ConstructVector(0.0, 0.0, 0.0);
-                qbVector<double> normalVector = ConstructVector(0.0, 0.0, -1.0);
-                qbVector<double> globalOrigin = trnfrmMatrix.Apply(localOrigin, qbRT::FWDTFORM);
+                qbVector<double> localOrigin = ConstructVector(0.0, 0.0, 0.0),
+                                 normalVector = ConstructVector(0.0, 0.0, -1.0),
+                                 globalOrigin = trnfrmMatrix.Apply(localOrigin, qbRT::FWDTFORM);
                 localNormal = trnfrmMatrix.Apply(normalVector, qbRT::FWDTFORM) - globalOrigin;
                 localNormal.Normalize();
                 localColor = baseColor;

@@ -5,22 +5,8 @@ qbRT::SimpleMaterial::~SimpleMaterial()
 {
 }
 
-void qbRT::SimpleMaterial::SetColor(double red, double green, double blue)
-{
-    baseColor = ConstructVector(red, green, blue);
-}
-
-void qbRT::SimpleMaterial::SetReflectivity(double ref)
-{
-    reflectivity = ref;
-}
-void qbRT::SimpleMaterial::SetShininess(double shineVal)
-{
-    shininess = shineVal;
-}
-
 qbVector<double> qbRT::SimpleMaterial::ComputeColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                    const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
+                                                    const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                                     const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                                     const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                     const qbRT::Ray &cameraRay)
@@ -40,7 +26,7 @@ qbVector<double> qbRT::SimpleMaterial::ComputeColor(const std::vector<std::share
 
 // Function to calculate the specular.
 qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                       const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
+                                                       const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                                        const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                        const qbRT::Ray &cameraRay)
 {
@@ -60,15 +46,13 @@ qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::sh
         qbRT::Ray lightRay(startPoint, startPoint + lightDir);
 
         qbVector<double> poi{3}, poiNormal{3}, poiColor{3};
-        bool validInt;
+        bool validInt = false;
         // check if there is any obstruction from the source.
         for (auto obj : objectList)
         {
-            if (obj->TestIntersection(lightRay, poi, poiNormal, poiColor))
-            {
-                validInt = true;
+            validInt = obj->TestIntersection(lightRay, poi, poiNormal, poiColor);
+            if (validInt)
                 break;
-            }
         }
         // if there there was not any intersection found, proceed to calculate
         // the specular component.
@@ -93,4 +77,18 @@ qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::sh
         ComputeColorIntensity(light->color, red, green, blue, intensity);
     }
     return ConstructVector(red, green, blue);
+}
+
+void qbRT::SimpleMaterial::SetColor(double red, double green, double blue)
+{
+    baseColor = ConstructVector(red, green, blue);
+}
+
+void qbRT::SimpleMaterial::SetReflectivity(double ref)
+{
+    reflectivity = ref;
+}
+void qbRT::SimpleMaterial::SetShininess(double shineVal)
+{
+    shininess = shineVal;
 }

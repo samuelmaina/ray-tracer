@@ -37,17 +37,10 @@ namespace qbRT
         ~Camera();
 
     private:
-        qbVector<double> m_position{3};
-        qbVector<double> m_lookAt{3};
-        qbVector<double> m_cameraUp{3};
-        double m_length;
-        double m_horiLength;
-        double m_aspectRatio;
-
-        qbVector<double> m_alignVector{3};
-        qbVector<double> m_projectionScreenU{3};
-        qbVector<double> m_projectionScreenV{3};
-        qbVector<double> m_projectionScreenCentre{3};
+        qbVector<double> m_position{3}, m_lookAt{3}, m_cameraUp{3};
+        double m_length, m_horiLength, m_aspectRatio;
+        qbVector<double> m_alignVector{3}, m_projectionScreenU{3},
+            m_projectionScreenV{3}, m_projectionScreenCentre{3};
     };
 
 }

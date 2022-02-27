@@ -8,7 +8,8 @@ qbRT::ObjSphere::~ObjSphere()
 {
 }
 
-bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &intPoint, qbVector<double> &localNormal, qbVector<double> &localColor)
+bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &intPoint,
+                                       qbVector<double> &localNormal, qbVector<double> &localColor)
 {
 
     // copy the ray and perform the backward transform.
@@ -63,9 +64,7 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double
             newOrigin = trnfrmMatrix.Apply(objOrigin, qbRT::FWDTFORM);
         localNormal = intPoint - newOrigin;
         localNormal.Normalize();
-
         localColor = baseColor;
-
         return true;
     }
 

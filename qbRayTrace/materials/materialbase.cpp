@@ -8,7 +8,7 @@ qbRT::MaterialBase::~MaterialBase()
 {
 }
 qbVector<double> qbRT::MaterialBase::ComputeColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                  const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
+                                                  const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                                   const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                                   const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                   const qbRT::Ray &cameraRay)
@@ -18,7 +18,7 @@ qbVector<double> qbRT::MaterialBase::ComputeColor(const std::vector<std::shared_
 }
 
 qbVector<double> qbRT::MaterialBase::ComputeDiffuseColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                         const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
+                                                         const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                                          const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                                          const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                          const qbVector<double> &baseColor)

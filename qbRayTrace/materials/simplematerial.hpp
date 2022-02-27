@@ -3,6 +3,7 @@
 
 #include "materialbase.hpp"
 #include "../utils/vectormanipulators.hpp"
+#include "../lights/pointlight.hpp"
 #include "../utils/mathUtils.hpp"
 
 namespace qbRT
@@ -13,14 +14,14 @@ namespace qbRT
         SimpleMaterial();
         virtual ~SimpleMaterial() override;
         virtual qbVector<double> ComputeColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                              const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
+                                              const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                               const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                               const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                               const qbRT::Ray &cameraRay) override;
 
         // Function to  compute the specular highlights
         qbVector<double> ComputeSpecular(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                         const std::vector<std::shared_ptr<qbRT::PointLight>> &lightList,
+                                         const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                          const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                          const qbRT::Ray &cameraRay);
 
@@ -30,8 +31,7 @@ namespace qbRT
 
     public:
         qbVector<double> baseColor = ConstructVector(1.0, 0.0, 1.0);
-        double reflectivity = 0.0;
-        double shininess = 0.0;
+        double reflectivity = 0.0, shininess = 0.0;
     };
 }
 

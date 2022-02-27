@@ -21,25 +21,21 @@ qbRT::Scene::Scene()
     camera.UpdateCameraGeometry();
 
     // set the objects, planes, materials and lights.
-    AddNObjects(noOfObjects);
+    AddNSpheres(noOfObjects);
 
     AddNPlanes(noOfPlanes);
 
-    AddNLights(noOfLights);
+    AddNPointLights(noOfLights);
 
-    AddNMaterials(noOfMaterials);
-
-    materialList.at(0)->SetColor(0.25, 0.5, 0.8);
-    materialList.at(0)->SetReflectivity(0.5);
-    materialList.at(0)->SetShininess(10.0);
+    AddNSimpleMaterials(noOfMaterials);
 
     // the transformation matrix for the three objects and one plane
     qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
 
-    setTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.75);
-    setTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.5, 0.5);
-    setTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.75, 0.75);
-    setTransformationInMatrix(planeMatrix, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
+    setTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.5, 0.5);
+    setTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.75, 0.5);
+    setTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 1);
+    setTransformationInMatrix(planeMatrix, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
 
     // Apply the matrix to the objects and the plane.
     objectList.at(0)->SetTranformMatrix(matrix1);
@@ -49,23 +45,24 @@ qbRT::Scene::Scene()
 
     // set the base colors for the objects and the plane.
     objectList.at(0)->SetColor(0.25, 0.5, 0.8);
-
-    objectList.at(0)->AssignMaterial(materialList.at(0))
-        objectList.at(1)
-            ->SetColor(1.0, 0.5, 1.0);
+    objectList.at(1)
+        ->SetColor(1.0, 0.5, 1.0);
     objectList.at(2)->SetColor(1.0, 0.8, 0.0);
     // set the plane to gray.
     objectList.at(3)->SetColor(0.5, 0.5, 0.5);
 
+    objectList.at(0)->AssignMaterial(materialList.at(0));
+
     // the lights
-    lightList.at(0)->SetLocation(5.0, -10.0, -5.0);
-    lightList.at(0)->SetColor(1.0, 1.0, 1.0);
+    lightList.at(0)
+        ->SetLocation(5.0, -10.0, -5.0);
+    lightList.at(0)->SetColor(1.0, 0.0, 0.0);
 
     lightList.at(1)->SetLocation(-5.0, -10.0, -5.0);
-    lightList.at(1)->SetColor(1.0, 0.0, 0.0);
+    lightList.at(1)->SetColor(0.0, 1.0, 0.0);
 
     lightList.at(2)->SetLocation(0.0, -10.0, -5.0);
-    lightList.at(2)->SetColor(0.0, 1.0, 0.0);
+    lightList.at(2)->SetColor(0.0, 0.0, 1.0);
 };
 
 qbRT::Scene::~Scene()
@@ -73,21 +70,16 @@ qbRT::Scene::~Scene()
 }
 bool qbRT::Scene::Render(qbImage &outputImage)
 {
-    int xSize = outputImage.GetXSize();
-    int ySize = outputImage.GetYSize();
+    int xSize = outputImage.GetXSize(), ySize = outputImage.GetYSize();
 
     qbRT::Ray cameraRay;
-    qbVector<double> intPoint{3};
-    qbVector<double> localNormal{3};
-    qbVector<double> localColor{3};
+    qbVector<double> intPoint{3}, localNormal{3}, localColor{3};
 
-    double xFact = getFactor(xSize);
-    double yFact = getFactor(ySize);
-    double minDist = 0.0;
-    double maxDist = 1e6;
+    double xFact = getFactor(xSize),
+           yFact = getFactor(ySize),
+           minDist = 0.0, maxDist = 1e6;
 
-    int counter = 0;
-    int total = xSize * ySize;
+    int counter = 0, total = xSize * ySize;
 
     double normX, normY;
 
@@ -116,6 +108,7 @@ bool qbRT::Scene::Render(qbImage &outputImage)
                 // first check if the current object has a material.
                 if (closestObject->hasMaterial)
                 {
+
                     // use the material to compute the color.
                     qbVector<double> color = closestObject->material->ComputeColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, cameraRay);
 
@@ -138,9 +131,7 @@ bool qbRT::Scene::Render(qbImage &outputImage)
                         if (validIllum)
                         {
                             illumFound = true;
-                            red += color.GetElement(0) * intensity;
-                            green += color.GetElement(1) * intensity;
-                            blue += color.GetElement(2) * intensity;
+                            ComputeColorIntensity(color, red, green, blue, intensity);
                         }
                     }
                     if (illumFound)
@@ -157,7 +148,9 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     return true;
 }
 
-bool qbRT::Scene::CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> &closestObject, qbVector<double> &closestIntPoint, qbVector<double> &closestLocalNormal, qbVector<double> &closestLocalColor)
+bool qbRT::Scene::CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> &closestObject,
+                          qbVector<double> &closestIntPoint, qbVector<double> &closestLocalNormal,
+                          qbVector<double> &closestLocalColor)
 {
     qbVector<double> intPoint{3}, localNormal{3}, localColor{3};
 
@@ -194,7 +187,7 @@ bool qbRT::Scene::CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> 
     return intFound;
 }
 
-void qbRT::Scene::AddNObjects(int no)
+void qbRT::Scene::AddNSpheres(int no)
 {
     for (int i = 0; i < no; ++i)
     {
@@ -210,15 +203,20 @@ void qbRT::Scene::AddNPlanes(int no)
     }
 }
 
-void qbRT::Scene::AddNMaterials(int no)
+void qbRT::Scene::AddNSimpleMaterials(int no)
 {
     for (int i = 0; i < no; ++i)
     {
-        materialList.push_back(std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial()));
+
+        auto material = std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial());
+        material->SetColor(0.25, 0.5, 0.8);
+        material->SetReflectivity(0.5);
+        material->SetShininess(10.0);
+        materialList.push_back(material);
     }
 }
 
-void qbRT::Scene::AddNLights(int no)
+void qbRT::Scene::AddNPointLights(int no)
 {
     for (int i = 0; i < no; ++i)
     {

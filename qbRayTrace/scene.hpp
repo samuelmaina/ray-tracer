@@ -1,13 +1,16 @@
 #ifndef SCENE_H
 #define SCENE_H
+
 #include <memory>
 #include <vector>
 #include <SDL2/SDL.h>
 #include "camera.hpp"
 #include "qbImage.hpp"
 #include "./primitives/objsphere.hpp"
+#include "./primitives/objplane.hpp"
 #include "./lights/pointlight.hpp"
 #include "./utils/vectormanipulators.hpp"
+#include "./utils/mathUtils.hpp"
 #include "./materials/simplematerial.hpp"
 
 namespace qbRT
@@ -24,13 +27,15 @@ namespace qbRT
         Scene(/* args */);
         ~Scene();
         bool Render(qbImage &outputImage);
-        void AddNObjects(int no);
-        void AddNLights(int no);
+        void AddNSpheres(int no);
+        void AddNPointLights(int no);
         void AddNPlanes(int no);
-        void AddNMaterials(int no);
+        void AddNSimpleMaterials(int no);
 
         // function to cast ray into the scene.
-        bool CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> &closestObject, qbVector<double> &closestIntPoint, qbVector<double> &closestLocalNormal, qbVector<double> &closestLocalColor);
+        bool CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> &closestObject,
+                     qbVector<double> &closestIntPoint, qbVector<double> &closestLocalNormal,
+                     qbVector<double> &closestLocalColor);
     };
 }
 
