@@ -32,9 +32,9 @@ namespace qbRT
 
         // function to cast a ray into the scene.
         bool CastRay(const qbRT::Ray &castRay, const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                     const std::shared_ptr<qbRT::ObjectBase> &thisObject,
+                     const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                      std::shared_ptr<qbRT::ObjectBase> &closestObject,
-                     qbVector<double> &closetIntPoint, qbVector<double> &closetLocalNormal,
+                     qbVector<double> &closestIntPoint, qbVector<double> &closetLocalNormal,
                      qbVector<double> closestLocalColor);
 
         // function to compute the reflection color.
