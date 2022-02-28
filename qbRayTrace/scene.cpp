@@ -34,7 +34,7 @@ qbRT::Scene::Scene()
 
     setTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.5, 0.5);
     setTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.75, 0.5);
-    setTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 1);
+    setTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.25);
     setTransformationInMatrix(planeMatrix, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
 
     // Apply the matrix to the objects and the plane.
