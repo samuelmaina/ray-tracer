@@ -1,5 +1,10 @@
 # Ray-Tracing-
-An application that implements ray tracing from stratch using SDL2 package for rendering. 
+An application that implements ray tracing from stratch using SDL2 package for rendering. Mathematics and linear algebra to render object of different shapes and materials(with different shininess and reflectivity) of different colors using vectors.
+
+
+to run the code , download the SDL2  from https://www.libsdl.org/download-2.0.php,
+clone the project and replace the SDL2PATH variable in the makefile with the absolute path of where the SLD2 folder was extracted,
+
 THe following are screenshots of  the different stages of development.
 ![Screenshot 2022-02-08 161321](https://user-images.githubusercontent.com/55924723/155990815-c1d3a631-a896-459d-b2ed-21f12e87b3ec.png)
 ![Screenshot 2022-02-08 164131](https://user-images.githubusercontent.com/55924723/155990839-2a4d0b2f-f883-4fcb-b38f-c7ad2d098bda.png)
