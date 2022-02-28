@@ -79,6 +79,29 @@ qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::sh
     return ConstructVector(red, green, blue);
 }
 
+qbVector<double> qbRT::SimpleMaterial::ComputeReflectionColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
+                                                              const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
+                                                              const std::shared_ptr<qbRT::ObjectBase> &currentObject,
+                                                              const qbVector<double> &intPoint, const qbVector<double> &localNormal,
+                                                              const qbRT::Ray &incidentRay)
+{
+    qbVector<double> reflectionVector{3}, d = incidentRay.GetRayVector();
+    reflectionVector = d - (2 * DotProduct(d, localNormal) * localNormal);
+    qbRT::Ray reflectionRay(intPoint, intPoint + reflectionVector);
+    std::shared_ptr<qbRT::ObjectBase> closestObject;
+    qbVector<double> closestIntPoint{3}, closestLocalNormal{3}, closestLocalColor{3};
+    bool intFound = CastRay(reflectionRay, objectList, currentObject, closestObject, closestIntPoint, closestLocalNormal, closestLocalColor);
+    qbVector<double> matColor{3};
+    if (intFound && (reflectionRayCount < maxReflectionRays))
+    {
+        reflectionRayCount++;
+        if (closestObject->hasMaterial)
+        {
+            matColor = closestObject->material->ComputeColor(objectList, lightList, currentObject, intPoint, localNormal, reflectionRay);
+        }
+    }
+}
+
 void qbRT::SimpleMaterial::SetColor(double red, double green, double blue)
 {
     baseColor = ConstructVector(red, green, blue);

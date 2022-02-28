@@ -38,11 +38,6 @@ namespace qbRT
                      qbVector<double> closestLocalColor);
 
         // function to compute the reflection color.
-        qbVector<double> ComputeReflectionColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
-                                                const std::shared_ptr<qbRT::ObjectBase> &currentObject,
-                                                const qbVector<double> &intPoint, const qbVector<double> &localNormal,
-                                                const qbRT::Ray &incidentRay);
 
     public:
         inline static int maxReflectionRays;

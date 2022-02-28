@@ -44,23 +44,6 @@ qbVector<double> qbRT::MaterialBase::ComputeDiffuseColor(const std::vector<std::
     return diffuseColor;
 }
 
-qbVector<double> qbRT::MaterialBase::ComputeReflectionColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                            const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
-                                                            const std::shared_ptr<qbRT::ObjectBase> &currentObject,
-                                                            const qbVector<double> &intPoint, const qbVector<double> &localNormal,
-                                                            const qbRT::Ray &incidentRay)
-{
-    qbVector<double> reflectionColor{3}, d = incidentRay.GetRayVector(),
-                                         reflectionVector = d - (2 * DotProduct(d, localNormal) * localNormal);
-    qbRT::Ray reflectionRay(intPoint, intPoint + reflectionVector);
-    // cast the reflection ray and  find the closest objects that it intersects with.
-    std::shared_ptr<qbRT::ObjectBase> closestObject;
-    qbVector<double> closestIntPoint{3}, closestLocalNormal{3}, closestLocalNormal{3}, closestLocalColor{3};
-    bool intFound = CastRay(reflectionRay, objectList, currentObject,
-                            closestObject, closestIntPoint, closestLocalNormal, closestLocalColor);
-    // compute illumination for the closest object assuming that there was a valid intersection found.
-}
-
 bool qbRT::MaterialBase::CastRay(const qbRT::Ray &castRay, const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
                                  const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                  std::shared_ptr<qbRT::ObjectBase> &closestObject,
