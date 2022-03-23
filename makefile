@@ -5,7 +5,6 @@ linkTarget= qbRay
 LIBS= -LIBS2
 
 SDL2PATH= C:\Users\SAM\Desktop\folders\academics_prac\Projects\Ray-Tracing-\SDL2
-
 #define any flags. if working with cygwin in windows don't put the whole path in to the path.
 CFLAGS= -std=c++17 -Ofast -I"$(SDL2PATH)\include" -L"$(SDL2PATH)\lib" -Wall -lmingw32 -lSDL2main -lSDL2
 

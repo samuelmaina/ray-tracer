@@ -24,11 +24,6 @@ namespace qbRT
                                          const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                          const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                          const qbRT::Ray &cameraRay);
-        qbVector<double> ComputeReflectionColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
-                                                const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
-                                                const std::shared_ptr<qbRT::ObjectBase> &currentObject,
-                                                const qbVector<double> &intPoint, const qbVector<double> &localNormal,
-                                                const qbRT::Ray &incidentRay);
 
         void SetColor(double red, double green, double blue);
         void SetReflectivity(double ref);

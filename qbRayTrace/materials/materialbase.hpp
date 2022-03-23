@@ -30,6 +30,14 @@ namespace qbRT
                                                     const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                                     const qbVector<double> &baseColor);
 
+        qbVector<double> ComputeReflectionColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
+                                                const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
+                                                const std::shared_ptr<qbRT::ObjectBase> &currentObject,
+                                                const qbVector<double> &intPoint, const qbVector<double> &localNormal,
+                                                const qbRT::Ray &incidentRay);
+
+        static void ResetRayCount();
+
         // function to cast a ray into the scene.
         bool CastRay(const qbRT::Ray &castRay, const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
                      const std::shared_ptr<qbRT::ObjectBase> &currentObject,

@@ -108,7 +108,8 @@ bool qbRT::Scene::Render(qbImage &outputImage)
                 // first check if the current object has a material.
                 if (closestObject->hasMaterial)
                 {
-
+                    // reset  so that the other materials have a fresh count of number of rays.
+                    qbRT::MaterialBase::ResetRayCount();
                     // use the material to compute the color.
                     qbVector<double> color = closestObject->material->ComputeColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, cameraRay);
 
