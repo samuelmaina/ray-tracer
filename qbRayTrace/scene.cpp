@@ -1,7 +1,7 @@
 #include "scene.hpp"
 
 // where T represent translation, R rotation and S scale
-void setTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz);
+void SetTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz);
 
 double getFactor(int size);
 
@@ -32,10 +32,10 @@ qbRT::Scene::Scene()
     // the transformation matrix for the three objects and one plane
     qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
 
-    setTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.5, 0.5);
-    setTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.75, 0.5);
-    setTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.25);
-    setTransformationInMatrix(planeMatrix, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
+    SetTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.5, 0.5);
+    SetTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.75, 0.5);
+    SetTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.25);
+    SetTransformationInMatrix(planeMatrix, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
 
     // Apply the matrix to the objects and the plane.
     objectList.at(0)->SetTranformMatrix(matrix1);
@@ -231,7 +231,7 @@ double getFactor(int size)
     return 1.0 / (static_cast<double>(size) / 2.0);
 }
 
-void setTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz)
+void SetTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz)
 {
     matrix.SetTransform(ConstructVector(Tx, Ty, Tz), ConstructVector(Rx, Ry, Rz), ConstructVector(Sx, Sy, Sz));
 }
