@@ -3,7 +3,7 @@
 // where T represent translation, R rotation and S scale
 void SetTransformationInMatrix(qbRT::GTForm &matrix, double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz);
 
-double getFactor(int size);
+double GetFactor(int size);
 
 qbRT::Scene::Scene()
 {
@@ -27,14 +27,18 @@ qbRT::Scene::Scene()
 
     AddNPointLights(noOfLights);
 
-    AddNSimpleMaterials(noOfMaterials);
+    auto material = std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial());
+    material->SetColor(0.25, 0.5, 0.8);
+    material->SetReflectivity(0.9);
+    material->SetShininess(10.0);
+    materialList.push_back(material);
 
     // the transformation matrix for the three objects and one plane
     qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
 
-    SetTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.75, 0.5, 0.5);
-    SetTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.75, 0.5);
-    SetTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.25);
+    SetTransformationInMatrix(matrix1, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    SetTransformationInMatrix(matrix2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    SetTransformationInMatrix(matrix3, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
     SetTransformationInMatrix(planeMatrix, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
 
     // Apply the matrix to the objects and the plane.
@@ -47,7 +51,7 @@ qbRT::Scene::Scene()
     objectList.at(0)->SetColor(0.25, 0.5, 0.8);
     objectList.at(1)
         ->SetColor(1.0, 0.5, 1.0);
-    objectList.at(2)->SetColor(1.0, 0.8, 0.0);
+    objectList.at(2)->SetColor(0.6, 0.6, 0.7);
     // set the plane to gray.
     objectList.at(3)->SetColor(0.5, 0.5, 0.5);
 
@@ -75,16 +79,19 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     qbRT::Ray cameraRay;
     qbVector<double> intPoint{3}, localNormal{3}, localColor{3};
 
-    double xFact = getFactor(xSize),
-           yFact = getFactor(ySize),
+    double xFact = GetFactor(xSize),
+           yFact = GetFactor(ySize),
            minDist = 0.0, maxDist = 1e6;
 
     int counter = 0, total = xSize * ySize;
 
     double normX, normY;
 
-    for (int x = 0; x < xSize; ++x)
-        for (int y = 0; y < ySize; ++y)
+    for (int y = 0; y < ySize; ++y)
+    {
+
+        std::cout << "progresss = " << (y / static_cast<double>(ySize)) * 100 << " % " << std::endl;
+        for (int x = 0; x < xSize; ++x)
         {
             // Normalize the x and y coordinates.
             normX = x * xFact - 1.0;
@@ -146,6 +153,7 @@ bool qbRT::Scene::Render(qbImage &outputImage)
                 }
             }
         }
+    }
     return true;
 }
 
@@ -204,19 +212,6 @@ void qbRT::Scene::AddNPlanes(int no)
     }
 }
 
-void qbRT::Scene::AddNSimpleMaterials(int no)
-{
-    for (int i = 0; i < no; ++i)
-    {
-
-        auto material = std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial());
-        material->SetColor(0.25, 0.5, 0.8);
-        material->SetReflectivity(0.5);
-        material->SetShininess(10.0);
-        materialList.push_back(material);
-    }
-}
-
 void qbRT::Scene::AddNPointLights(int no)
 {
     for (int i = 0; i < no; ++i)
@@ -226,7 +221,7 @@ void qbRT::Scene::AddNPointLights(int no)
 }
 
 // generate a factor between 0, and 2,
-double getFactor(int size)
+double GetFactor(int size)
 {
     return 1.0 / (static_cast<double>(size) / 2.0);
 }
