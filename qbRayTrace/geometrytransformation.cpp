@@ -77,7 +77,8 @@ void qbRT::GTForm::SetTransform(const qbVector<double> &translation, const qbVec
 
     // do the final transform Matrix.
     // asumption that by default the use is making a forward transformation.
-    forwardTransform = translationMatrix * scaleMatrix * rotationMatrixX * rotationMatrixY * rotationMatrixZ;
+    // set the scaling to be done first so as to accommdodate both cylinder and cones.
+    forwardTransform = translationMatrix * rotationMatrixX * rotationMatrixY * rotationMatrixZ * scaleMatrix;
 
     backwardTransform = forwardTransform;
     // it is now the inverse of the forwardTransformation.
