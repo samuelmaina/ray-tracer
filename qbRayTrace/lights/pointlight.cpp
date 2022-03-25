@@ -32,6 +32,16 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
         if (obj != currentObject)
         {
             validInt = obj->TestIntersection(lightRay, interscPoint, interscPointNormal, interPointColor);
+            // ensure that the valid intersection does not have another side of intersection since that would not be
+            // a valid intersection but will be interpreted as such more so for cones and cylinders
+            if (validInt)
+            {
+                // get the distance between teh point of intersection and the source of light
+                double distance = (interscPoint - startPoint).norm();
+                if (distance > lightDir)
+                    // this is a false positive, reject it.
+                    validInt = false
+            }
         }
         // if there is an intersection, thne the object is blocking light from the light source so we no need
         // to search further.
