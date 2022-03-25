@@ -32,13 +32,13 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double
     double b = 2.0 * DotProduct(point1, vhat);
     double c = DotProduct(point1, point1) - 1.0;
 
-    double test = (b * b) - 4.0 * c;
     qbVector<double> pointOfIntersection;
-    if (test > 0.0)
+
+    double t1, t2;
+
+    if (GetRoots(1.0, b, c, t1, t2))
     {
-        double numSQRT = sqrtf(test);
-        double t1 = (-b + numSQRT) / 2.0;
-        double t2 = (-b - numSQRT) / 2.0;
+
         // if either t1 or t2 is less that 0, then there is some part
         // of the object that is behind the camera, hence ignore the point.
 
@@ -67,6 +67,5 @@ bool qbRT::ObjSphere::TestIntersection(const qbRT::Ray &castRay, qbVector<double
         localColor = baseColor;
         return true;
     }
-
     return false;
 }
