@@ -12,17 +12,16 @@ qbVector<double> ConstructFinalColor(const double red, const double green, const
     return ConstructVector(red * baseColor.GetElement(0), green * baseColor.GetElement(1), blue * baseColor.GetElement(2));
 }
 
-std::vector<double> GetRoots(double a, double b, double c)
+bool GetRoots(double a, double b, double c, double &root1, double &root2)
 {
-    std::vector<double> ans;
     double twoA = 2.0 * a;
     double det = pow(b, 2.0) - 4 * a * c;
     // we are working in plane and we don't expect any complex numbers
     // hence throw error  when the roots are complex
     if (det < 0)
-        throw "The quadratic equation can not have real roots";
+        return false;
     double d = sqrt(det);
-    ans.push_back((-b + d) / twoA);
-    ans.push_back((-b - d) / twoA);
-    return ans;
+    root1 = (-b + d) / twoA;
+    root2 = (-b - d) / twoA;
+    return true;
 }

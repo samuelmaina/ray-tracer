@@ -3,6 +3,7 @@
 
 #include "./objectbase.hpp"
 #include "../utils/vectormanipulators.hpp"
+#include "../utils/mathUtils.hpp"
 
 namespace qbRT
 {
