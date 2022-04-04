@@ -7,6 +7,11 @@ clone the project and replace the SDL2PATH variable in the makefile with the abs
 
 THe following are screenshots of  the different stages of development.
 
+## Running the code
+1) clone the project.
+2) Install the SDL2 library
+3) run make 
+
 ## The 2D rendering
 ![Screenshot 2022-02-08 161321](https://user-images.githubusercontent.com/55924723/155990815-c1d3a631-a896-459d-b2ed-21f12e87b3ec.png)
 
