@@ -1,10 +1,9 @@
 #include "pointlight.hpp"
 
-#define _USE_MATH_DEFINES
 qbRT::PointLight::PointLight()
 {
     color = ConstructVector(1.0, 1.0, 1.0);
-    intensity = 1.0;
+    intensity = 0.5;
 }
 
 qbRT::PointLight::~PointLight()
