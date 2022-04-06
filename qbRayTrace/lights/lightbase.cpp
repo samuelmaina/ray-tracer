@@ -18,7 +18,17 @@ void qbRT::LightBase::SetColor(const double r, const double g, const double b)
 {
     color = ConstructVector(r, g, b);
 }
+
+void qbRT::LightBase::SetColor(const qbVector<double> color)
+{
+    this->color = color;
+}
 void qbRT::LightBase::SetLocation(const double x, const double y, const double z)
 {
     location = ConstructVector(x, y, z);
+}
+
+void qbRT::LightBase::SetLocation(const qbVector<double> location)
+{
+    this->location = location;
 }

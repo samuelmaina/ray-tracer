@@ -21,7 +21,9 @@ namespace qbRT
                                          const std::shared_ptr<qbRT::ObjectBase> &currentObject,
                                          qbVector<double> &color, double &intensity);
         void SetColor(const double r, const double g, const double b);
+        void SetColor(const qbVector<double> color);
         void SetLocation(const double x, const double y, const double z);
+        void SetLocation(const qbVector<double> location);
 
     public:
         qbVector<double> color{3}, location{3};
