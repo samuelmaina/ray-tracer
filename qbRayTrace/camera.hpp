@@ -17,7 +17,7 @@ namespace qbRT
         void SetUp(double x, double y, double z);
         void SetLength(double newLength);
         void SetAspect(double newAspect);
-        void SethorzSize(double newSize);
+        void SetHorizontalSize(double newSize);
 
         qbVector<double> GetPosition();
         qbVector<double> GetLookAt();

@@ -32,7 +32,7 @@ void qbRT::Camera::SetLength(double newLength)
 {
     m_length = newLength;
 }
-void qbRT::Camera::SethorzSize(double newHorzSize)
+void qbRT::Camera::SetHorizontalSize(double newHorzSize)
 {
     m_horiLength = newHorzSize;
 }
