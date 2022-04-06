@@ -57,8 +57,8 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
         double angle = acos(DotProduct(localNormal, lightDir));
 
         // if the normal is point away from the  light source, then there is no illumination.
-        double angle_ninety = acos(0.0);
-        if (angle > angle_ninety)
+        double ninety_degrees = acos(0.0);
+        if (angle > ninety_degrees)
         {
             color = this->color;
             intensity = 0.0;
@@ -67,7 +67,7 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
         else
         {
             color = this->color;
-            intensity = this->intensity * (1.0 - (angle / angle_ninety));
+            intensity = this->intensity * (1.0 - (angle / ninety_degrees));
             return true;
         }
     }
