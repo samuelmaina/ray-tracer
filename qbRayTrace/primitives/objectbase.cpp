@@ -31,6 +31,11 @@ void qbRT::ObjectBase::SetColor(const double r, const double g, const double b)
     baseColor = ConstructVector(r, g, b);
 }
 
+void qbRT::ObjectBase::SetColor(const qbVector<double> color)
+{
+    baseColor = color;
+}
+
 bool qbRT::ObjectBase::AssignMaterial(const std::shared_ptr<qbRT::MaterialBase> &objMaterial)
 {
     material = objMaterial;

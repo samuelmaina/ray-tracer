@@ -32,6 +32,7 @@ namespace qbRT
         bool CloseEnough(const double f1, const double f2);
         void SetColor(const double r, const double g, const double b);
 
+        void SetColor(qbVector<double> color);
         // Assign material to the object.
         bool AssignMaterial(const std::shared_ptr<qbRT::MaterialBase> &objectMaterial);
 
