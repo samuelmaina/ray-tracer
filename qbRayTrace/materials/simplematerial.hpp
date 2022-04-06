@@ -24,14 +24,6 @@ namespace qbRT
                                          const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
                                          const qbVector<double> &intPoint, const qbVector<double> &localNormal,
                                          const qbRT::Ray &cameraRay);
-
-        void SetColor(double red, double green, double blue);
-        void SetReflectivity(double ref);
-        void SetShininess(double shineVal);
-
-    public:
-        qbVector<double> baseColor = ConstructVector(1.0, 0.0, 1.0);
-        double reflectivity = 0.0, shininess = 0.0;
     };
 }
 

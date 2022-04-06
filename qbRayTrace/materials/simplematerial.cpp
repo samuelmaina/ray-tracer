@@ -88,18 +88,3 @@ qbVector<double> qbRT::SimpleMaterial::ComputeSpecular(const std::vector<std::sh
     }
     return ConstructVector(red, green, blue);
 }
-
-void qbRT::SimpleMaterial::SetColor(double red, double green, double blue)
-{
-    baseColor = ConstructVector(red, green, blue);
-}
-
-void qbRT::SimpleMaterial::SetReflectivity(double ref)
-{
-    reflectivity = ref;
-}
-
-void qbRT::SimpleMaterial::SetShininess(double shineVal)
-{
-    shininess = shineVal;
-}
