@@ -9,6 +9,8 @@
 #include "./qbLinAlg/qbMatrix.h"
 #include "ray.hpp"
 
+#include "math.h"
+
 namespace qbRT
 {
     // Define direction flag values.
@@ -23,6 +25,9 @@ namespace qbRT
         GTForm();
         ~GTForm();
         GTForm(const qbMatrix2<double> &fwd, const qbMatrix2<double> &bck);
+
+        void SetTransformationValues(double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz);
+
         void SetTransform(const qbVector<double> &translation,
                           const qbVector<double> &rotation,
                           const qbVector<double> &scale);

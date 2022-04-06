@@ -12,6 +12,11 @@ qbRT::GTForm::~GTForm()
 {
 }
 
+void qbRT::GTForm::SetTransformationValues(double Tx, double Ty, double Tz, double Rx, double Ry, double Rz, double Sx, double Sy, double Sz)
+{
+    this->SetTransform(ConstructVector(Tx, Ty, Tz), ConstructVector(Rx, Ry, Rz), ConstructVector(Sx, Sy, Sz));
+}
+
 qbRT::GTForm::GTForm(const qbMatrix2<double> &fwd, const qbMatrix2<double> &bck)
 {
     // reject if any inputs are  not 4x4
@@ -76,7 +81,7 @@ void qbRT::GTForm::SetTransform(const qbVector<double> &translation, const qbVec
     scaleMatrix.SetElement(2, 2, scale.GetElement(2));
 
     // do the final transform Matrix.
-    // asumption that by default the use is making a forward transformation.
+    // asumption that by default the user is making a forward transformation.
     // set the scaling to be done first so as to accommdodate both cylinder and cones.
     forwardTransform = translationMatrix * rotationMatrixX * rotationMatrixY * rotationMatrixZ * scaleMatrix;
 
