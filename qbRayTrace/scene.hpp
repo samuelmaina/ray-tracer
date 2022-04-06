@@ -19,23 +19,49 @@ namespace qbRT
     {
     private:
         qbRT::Camera camera;
+
+        unsigned noOfObjects;
+        unsigned noOfPlanes;
+        unsigned noOfPointLights;
+        unsigned noOfMaterials;
+
         std::vector<std::shared_ptr<qbRT::ObjectBase>> objectList;
         std::vector<std::shared_ptr<qbRT::LightBase>> lightList;
         std::vector<std::shared_ptr<qbRT::MaterialBase>> materialList;
+
+        unsigned xSize, ySize;
+        double xFact, yFact;
+        const double minDist = 0.0, maxDist = 1e6;
+
+        void SetCamera();
+
+        void SetMaterialsAndAssignToObjects();
+
+        void SetTransformationMatricesAndApplyToObjects();
+
+        void AssignColorsToObject();
+
+        void SetPointLightsColorsAndLocations();
+
+        void ComputeXAndYFactors();
+
+        void NormalizeXandYCoordinates(unsigned xPosition, unsigned yPosition, double &normX, double &normY);
+
+        bool IsThereValidLightIllumination(std::shared_ptr<qbRT::ObjectBase> &closestObject, qbVector<double> &closestIntPoint,
+                                           qbVector<double> &closestLocalNormal, qbVector<double> &color, double &red, double &blue, double &green);
 
     public:
         Scene(/* args */);
         ~Scene();
         bool Render(qbImage &outputImage);
-        void AddNSpheres(int no);
-        void AddNPointLights(int no);
-        void AddNPlanes(int no);
-        void AddNSimpleMaterials(int no);
+        void AddObjects();
 
         // function to cast ray into the scene.
         bool CastRay(qbRT::Ray &castRay, std::shared_ptr<qbRT::ObjectBase> &closestObject,
                      qbVector<double> &closestIntPoint, qbVector<double> &closestLocalNormal,
                      qbVector<double> &closestLocalColor);
+
+        qbVector<double> ComputePixelColor(unsigned xPosition, unsigned yPosition);
     };
 }
 

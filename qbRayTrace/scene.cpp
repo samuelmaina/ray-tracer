@@ -4,72 +4,32 @@ double GetFactor(int size);
 
 qbRT::Scene::Scene()
 {
-    int noOfObjects = 3;
-    int noOfPlanes = 1;
-    int noOfLights = 3;
-    int noOfMaterials = 1;
+    noOfObjects = 4;
+    noOfPointLights = 3;
+    noOfMaterials = 1;
 
-    // set the camera.
-    camera.SetPosition(0.0, -10.0, -1.0);
-    camera.SetLookAt(0.0, 0.0, 0.0);
-    camera.SetUp(0.0, 0.0, 1.0);
-    camera.SethorzSize(0.25);
-    camera.SetAspect(16.0 / 9.0);
-    camera.UpdateCameraGeometry();
+    SetCamera();
 
-    // set the objects, planes, materials and lights.
-    AddNSpheres(noOfObjects);
+    // each object is centered at the origin by default  and translation is
+    // used to move them  to their respective location hence no need to specify
+    // their position.
+    AddObjects();
 
-    AddNPlanes(noOfPlanes);
+    AssignColorsToObject();
 
-    AddNPointLights(noOfLights);
+    SetMaterialsAndAssignToObjects();
 
-    auto material = std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial());
-    material->SetColor(0.25, 0.5, 0.8);
-    material->SetReflectivity(1.0);
-    material->SetShininess(20.0);
-    materialList.push_back(material);
+    // does not need to pass the number of matrices since
+    // some objects in the scene won't require any transformations.
+    SetTransformationMatricesAndApplyToObjects();
 
-    // the transformation matrix for the three objects and one plane
-    qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
-
-    matrix1.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-
-    matrix2.SetTransformationValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
-
-    // Apply the matrix to the objects and the plane.
-    objectList.at(0)->SetTranformMatrix(matrix1);
-    objectList.at(1)->SetTranformMatrix(matrix2);
-    objectList.at(2)->SetTranformMatrix(matrix3);
-    objectList.at(3)->SetTranformMatrix(planeMatrix);
-
-    // set the base colors for the objects and the plane.
-    objectList.at(0)->SetColor(0.25, 0.5, 0.8);
-    objectList.at(1)
-        ->SetColor(1.0, 0.5, 1.0);
-    objectList.at(2)->SetColor(0.6, 0.6, 0.7);
-    // set the plane to gray.
-    objectList.at(3)->SetColor(0.5, 0.5, 0.5);
-
-    objectList.at(0)->AssignMaterial(materialList.at(0));
-
-    // the lights
-    lightList.at(0)
-        ->SetLocation(5.0, -10.0, -5.0);
-    lightList.at(0)->SetColor(1.0, 0.0, 0.0);
-
-    lightList.at(1)->SetLocation(-5.0, -10.0, -5.0);
-    lightList.at(1)->SetColor(0.0, 1.0, 0.0);
-
-    lightList.at(2)->SetLocation(0.0, -10.0, -5.0);
-    lightList.at(2)->SetColor(0.0, 0.0, 1.0);
+    SetPointLightsColorsAndLocations();
 };
 
 qbRT::Scene::~Scene()
 {
 }
+
 bool qbRT::Scene::Render(qbImage &outputImage)
 {
     xSize = outputImage.GetXSize();
@@ -87,11 +47,11 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     return true;
 }
 
-qbVector<double> qbRT::Scene::ComputePixelColor(int xPosition, int yPosition)
+qbVector<double> qbRT::Scene::ComputePixelColor(unsigned xPosition, unsigned yPosition)
 {
     qbRT::Ray cameraRay;
 
-    qbVector<double> intPoint{3}, localNormal{3}, localColor{3},
+    qbVector<double> unsignedPoint{3}, localNormal{3}, localColor{3},
         closestIntPoint{3}, closestLocalNormal{3}, closestLocalColor{3};
 
     std::shared_ptr<qbRT::ObjectBase> closestObject;
@@ -126,10 +86,7 @@ qbVector<double> qbRT::Scene::ComputePixelColor(int xPosition, int yPosition)
             bool illumFound = IsThereValidLightIllumination(closestObject, closestIntPoint, closestLocalNormal, color, red, green, blue);
 
             if (illumFound)
-            {
-
                 return ConstructFinalColor(red, green, blue, closestLocalColor);
-            }
 
             return matColor;
         }
@@ -203,33 +160,109 @@ void qbRT::Scene::ComputeXAndYFactors()
     yFact = GetFactor(ySize);
 }
 
-void qbRT::Scene::NormalizeXandYCoordinates(int xPosition, int yPosition, double &normX, double &normY)
+void qbRT::Scene::NormalizeXandYCoordinates(unsigned xPosition, unsigned yPosition, double &normX, double &normY)
 {
     normX = xPosition * xFact - 1.0;
     normY = yPosition * yFact - 1.0;
 }
 
-void qbRT::Scene::AddNSpheres(int no)
+void qbRT::Scene::SetCamera()
 {
-    for (int i = 0; i < no; ++i)
+    camera.SetPosition(0.0, -10.0, -1.0);
+    camera.SetLookAt(0.0, 0.0, 0.0);
+    camera.SetUp(0.0, 0.0, 1.0);
+    camera.SethorzSize(0.25);
+    camera.SetAspect(16.0 / 9.0);
+    camera.UpdateCameraGeometry();
+}
+
+void qbRT::Scene::SetMaterialsAndAssignToObjects()
+{
+
+    qbVector<qbVector<double>> colors{noOfMaterials};
+    colors.SetElement(0, ConstructVector(0.25, 0.5, 0.8));
+
+    qbVector<double> reflectivities{noOfMaterials},
+        shinelinessValues{noOfMaterials};
+
+    reflectivities.SetElement(0, 0.5);
+    shinelinessValues.SetElement(0, 10.0);
+
+    for (unsigned i = 0; i < noOfMaterials; i++)
+    {
+        materialList.push_back(std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial()));
+        materialList.at(i)->SetColor(colors.GetElement(i));
+        materialList.at(i)->SetReflectivity(reflectivities.GetElement(i));
+        materialList.at(i)->SetShininess(shinelinessValues.GetElement(i));
+    }
+    // some objects  won't have materials hence don't assign materials to object using
+    // object index.
+    objectList.at(0)->AssignMaterial(materialList.at(0));
+}
+
+void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
+{
+    qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
+    matrix1.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    matrix2.SetTransformationValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
+
+    objectList.at(0)->SetTranformMatrix(matrix1);
+    objectList.at(1)->SetTranformMatrix(matrix2);
+    objectList.at(2)->SetTranformMatrix(matrix3);
+    objectList.at(3)->SetTranformMatrix(planeMatrix);
+}
+
+void qbRT::Scene::AssignColorsToObject()
+{
+
+    qbVector<qbVector<double>> colors{noOfObjects};
+    colors.SetElement(0, ConstructVector(0.25, 0.5, 0.8));
+    colors.SetElement(1, ConstructVector(1.0, 0.5, 1.0));
+    colors.SetElement(2, ConstructVector(0.6, 0.6, 0.7));
+    colors.SetElement(3, ConstructVector(0.5, 0.5, 0.5));
+
+    for (unsigned i = 0; i < noOfObjects; i++)
+    {
+        objectList.at(i)->SetColor(colors.GetElement(i));
+    }
+}
+
+void qbRT::Scene::SetPointLightsColorsAndLocations()
+{
+
+    qbVector<qbVector<double>> colors{noOfPointLights};
+    qbVector<qbVector<double>> locations{noOfPointLights};
+
+    colors.SetElement(0, ConstructVector(1.0, 0.0, 0.0));
+    colors.SetElement(1, ConstructVector(0.0, 1.0, 0.0));
+    colors.SetElement(2, ConstructVector(0.0, 0.0, 1.0));
+
+    locations.SetElement(0, ConstructVector(5.0, -10.0, -5.0));
+    locations.SetElement(1, ConstructVector(-5.0, -10.0, -5.0));
+    locations.SetElement(2, ConstructVector(0.0, -10.0, -5.0));
+
+    for (int i = 0; i < noOfPointLights; ++i)
+    {
+        lightList.push_back(std::make_shared<qbRT::PointLight>(qbRT::PointLight()));
+        lightList.at(i)->SetColor(colors.GetElement(i));
+        lightList.at(i)->SetLocation(locations.GetElement(i));
+    }
+}
+
+void qbRT::Scene::AddObjects()
+{
+    unsigned noOfSpheres = 3;
+    unsigned noOfPlanes = 1;
+    for (int i = 0; i < noOfSpheres; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
     }
-}
 
-void qbRT::Scene::AddNPlanes(int no)
-{
-    for (int i = 0; i < no; ++i)
+    for (int i = 0; i < noOfPlanes; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::ObjPlane>(qbRT::ObjPlane()));
-    }
-}
-
-void qbRT::Scene::AddNPointLights(int no)
-{
-    for (int i = 0; i < no; ++i)
-    {
-        lightList.push_back(std::make_shared<qbRT::PointLight>(qbRT::PointLight()));
     }
 }
 
