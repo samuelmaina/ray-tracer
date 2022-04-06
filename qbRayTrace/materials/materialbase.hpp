@@ -12,6 +12,10 @@ namespace qbRT
     class MaterialBase
     {
     public:
+        qbVector<double> baseColor;
+        double reflectivity, shininess;
+
+    public:
         MaterialBase();
         virtual ~MaterialBase();
 
@@ -44,6 +48,12 @@ namespace qbRT
                      std::shared_ptr<qbRT::ObjectBase> &closestObject,
                      qbVector<double> &closestIntPoint, qbVector<double> &closetLocalNormal,
                      qbVector<double> closestLocalColor);
+
+        void SetColor(const double red, const double green, const double blue);
+        void SetColor(const qbVector<double> color);
+
+        void SetReflectivity(const double ref);
+        void SetShininess(const double shineVal);
 
         // function to compute the reflection color.
 

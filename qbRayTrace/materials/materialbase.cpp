@@ -4,10 +4,34 @@ qbRT::MaterialBase::MaterialBase()
 {
     maxReflectionRays = 3;
     reflectionRayCount = 0;
+
+    baseColor = ConstructVector(1.0, 1.0, 1.0);
+    reflectivity = 0.0;
+    shininess = 0.0;
 }
 
 qbRT::MaterialBase::~MaterialBase()
 {
+}
+
+void qbRT::MaterialBase::SetColor(const double red, const double green, const double blue)
+{
+    baseColor = ConstructVector(red, green, blue);
+}
+
+void qbRT::MaterialBase::SetColor(const qbVector<double> color)
+{
+    baseColor = color;
+}
+
+void qbRT::MaterialBase::SetReflectivity(const double ref)
+{
+    reflectivity = ref;
+}
+
+void qbRT::MaterialBase::SetShininess(const double shineVal)
+{
+    shininess = shineVal;
 }
 qbVector<double> qbRT::MaterialBase::ComputeColor(const std::vector<std::shared_ptr<qbRT::ObjectBase>> &objectList,
                                                   const std::vector<std::shared_ptr<qbRT::LightBase>> &lightList,
