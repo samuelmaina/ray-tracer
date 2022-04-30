@@ -12,10 +12,10 @@ qbVector<double> ConstructFinalColor(const double red, const double green, const
     return ConstructVector(red * baseColor.GetElement(0), green * baseColor.GetElement(1), blue * baseColor.GetElement(2));
 }
 
-bool GetRoots(double a, double b, double c, double &root1, double &root2)
+bool GetRoots(double const a, double const b, double const c, double &root1, double &root2)
 {
     double twoA = 2.0 * a;
-    double det = pow(b, 2.0) - 4 * a * c;
+    double det = GetSquare(b) - 4 * a * c;
     // we are working in plane and we don't expect any complex numbers
     // hence return false (unable to find roots) when the roots are complex
     if (det < 0)
@@ -26,4 +26,9 @@ bool GetRoots(double a, double b, double c, double &root1, double &root2)
     root1 = firstPart + secondPart;
     root2 = firstPart - secondPart;
     return true;
+}
+
+double GetSquare(double const a)
+{
+    return pow(a, 2.0);
 }
