@@ -1,6 +1,10 @@
 # Ray-Tracing-
-An application that implements ray tracing from stratch using SDL2 package for rendering. Mathematics and linear algebra to render object of different shapes and materials(with different shininess and reflectivity) of different colors using vectors.
+An application that implements ray tracing from scratch using mathematics and linear algebra to render object of different shapes,materials, shininess , colors, and reflectivity in 3D scene.
 
+## How the application works.
+The first places different object in the a 3D plane. The light sources and cameras are  placed at specific position whereas the other objects and planes are initially placed at the origin in which they are later moved using translation.
+
+To the scene of the different light rays intersect with different object surfaces where they are reflected back to the camera. Each object has test Intersection method which is used to test if it te
 
 to run the code , download the SDL2  from https://www.libsdl.org/download-2.0.php,
 clone the project and replace the SDL2PATH variable in the makefile with the absolute path of where the SLD2 folder was extracted,
