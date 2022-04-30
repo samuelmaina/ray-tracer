@@ -17,11 +17,13 @@ bool GetRoots(double a, double b, double c, double &root1, double &root2)
     double twoA = 2.0 * a;
     double det = pow(b, 2.0) - 4 * a * c;
     // we are working in plane and we don't expect any complex numbers
-    // hence throw error  when the roots are complex
+    // hence return false (unable to find roots) when the roots are complex
     if (det < 0)
         return false;
     double d = sqrt(det);
-    root1 = (-b + d) / twoA;
-    root2 = (-b - d) / twoA;
+    double firstPart = -b / twoA;
+    double secondPart = d / twoA;
+    root1 = firstPart + secondPart;
+    root2 = firstPart - secondPart;
     return true;
 }
