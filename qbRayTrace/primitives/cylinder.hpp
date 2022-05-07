@@ -2,15 +2,16 @@
 #define CYLINDER_H
 
 #include "objectbase.hpp"
-#include "../geometrytransformation.hpp"
-
-#include <cmath>
+#include "../utils/mathUtils.hpp"
 namespace qbRT
 {
     class Cylinder : public ObjectBase
     {
     private:
-        /* data */
+        bool IsZValueIsInRangeOfNegativeOneAndOne(const qbVector<double> point);
+        bool IsSqrtOfSumOfXanYSquaresLessThan1(const qbVector<double> point);
+        bool IsParallelToTheZOrigin(const qbVector<double> point);
+
     public:
         Cylinder(/* args */);
         virtual ~Cylinder() override;
