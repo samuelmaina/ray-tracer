@@ -4,10 +4,6 @@ double GetFactor(int size);
 
 qbRT::Scene::Scene()
 {
-    noOfObjects = 4;
-    noOfPointLights = 3;
-    noOfMaterials = 1;
-
     SetCamera();
 
     // each object is centered at the origin by default  and translation is
@@ -19,8 +15,6 @@ qbRT::Scene::Scene()
 
     SetMaterialsAndAssignToObjects();
 
-    // does not need to pass the number of matrices since
-    // some objects in the scene won't require any transformations.
     SetTransformationMatricesAndApplyToObjects();
 
     SetPointLightsColorsAndLocations();
@@ -30,6 +24,116 @@ qbRT::Scene::~Scene()
 {
 }
 
+void qbRT::Scene::SetCamera()
+{
+    camera.SetPosition(0, -10.0, -1.0);
+    camera.SetLookAt(0.0, 0.0, 0.0);
+    camera.SetUp(0.0, 0.0, 1.0);
+    camera.SetHorizontalSize(0.25);
+    camera.SetAspect(16.0 / 9.0);
+    camera.UpdateCameraGeometry();
+}
+
+void qbRT::Scene::AddObjects()
+{
+    unsigned noOfPlanes = 1;
+    unsigned noOfSpheres = 3;
+
+    noOfObjects = noOfSpheres + noOfPlanes;
+
+    for (int i = 0; i < noOfPlanes; ++i)
+    {
+        objectList.push_back(std::make_shared<qbRT::ObjPlane>(qbRT::ObjPlane()));
+    }
+
+    for (int i = 0; i < noOfSpheres; ++i)
+    {
+        objectList.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
+    }
+}
+
+void qbRT::Scene::AssignColorsToObject()
+{
+
+    qbVector<qbVector<double>> colors{noOfObjects};
+    colors.SetElement(0, ConstructVector(0.5, 0.5, 0.5));
+    colors.SetElement(1, ConstructVector(0.25, 0.5, 0.8));
+    colors.SetElement(2, ConstructVector(1.0, 0.5, 1.0));
+    colors.SetElement(3, ConstructVector(0.6, 0.6, 0.7));
+
+    for (unsigned i = 0; i < noOfObjects; i++)
+    {
+        objectList.at(i)->SetColor(colors.GetElement(i));
+    }
+}
+
+void qbRT::Scene::SetMaterialsAndAssignToObjects()
+{
+    noOfMaterials = 2;
+
+    qbVector<qbVector<double>> colors{noOfMaterials};
+    colors.SetElement(0, ConstructVector(1.0, 1.0, 1.0));
+    colors.SetElement(1, ConstructVector(1.0, 1.0, 1.0));
+
+    qbVector<double> reflectivities{noOfMaterials},
+        shinelinessValues{noOfMaterials};
+
+    reflectivities.SetElement(0, 0.7);
+    reflectivities.SetElement(1, 0.5);
+
+    shinelinessValues.SetElement(0, 7);
+    shinelinessValues.SetElement(1, 10.0);
+
+    for (unsigned i = 0; i < noOfMaterials; i++)
+    {
+        materialList.push_back(std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial()));
+        materialList.at(i)->SetColor(colors.GetElement(i));
+        materialList.at(i)->SetReflectivity(reflectivities.GetElement(i));
+        materialList.at(i)->SetShininess(shinelinessValues.GetElement(i));
+    }
+    // some objects  won't have materials hence don't assign materials to object using
+    // object index.
+    objectList.at(0)->AssignMaterial(materialList.at(0));
+    objectList.at(3)->AssignMaterial(materialList.at(1));
+}
+
+void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
+{
+    qbRT::GTForm planeMatrix, matrix1, matrix2, matrix3, matrix4;
+
+    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
+    matrix1.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    matrix2.SetTransformationValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+    objectList.at(0)->SetTranformMatrix(planeMatrix);
+    objectList.at(1)->SetTranformMatrix(matrix1);
+    objectList.at(2)->SetTranformMatrix(matrix2);
+    objectList.at(3)->SetTranformMatrix(matrix3);
+}
+
+void qbRT::Scene::SetPointLightsColorsAndLocations()
+{
+    noOfPointLights = 3;
+    qbVector<qbVector<double>> colors{noOfPointLights};
+    qbVector<qbVector<double>> locations{noOfPointLights};
+
+    colors.SetElement(0, ConstructVector(1.0, 0.0, 0.0));
+    colors.SetElement(1, ConstructVector(0.0, 1.0, 0.0));
+    colors.SetElement(2, ConstructVector(0.0, 0.0, 1.0));
+
+    locations.SetElement(0, ConstructVector(10.0, -10.0, -5.0));
+    locations.SetElement(1, ConstructVector(-10.0, -10.0, -5.0));
+    locations.SetElement(2, ConstructVector(0.0, -10.0, -5.0));
+
+    for (int i = 0; i < noOfPointLights; ++i)
+    {
+        lightList.push_back(std::make_shared<qbRT::PointLight>(qbRT::PointLight()));
+        lightList.at(i)->SetColor(colors.GetElement(i));
+        lightList.at(i)->SetLocation(locations.GetElement(i));
+    }
+}
+
 bool qbRT::Scene::Render(qbImage &outputImage)
 {
     xSize = outputImage.GetXSize();
@@ -37,7 +141,6 @@ bool qbRT::Scene::Render(qbImage &outputImage)
     ComputeXAndYFactors();
     for (int y = 0; y < ySize; ++y)
     {
-        std::cout << "progress = " << (y / static_cast<double>(ySize)) * 100 << " % " << std::endl;
         for (int x = 0; x < xSize; ++x)
         {
             qbVector<double> color = ComputePixelColor(x, y);
@@ -51,7 +154,7 @@ qbVector<double> qbRT::Scene::ComputePixelColor(unsigned xPosition, unsigned yPo
 {
     qbRT::Ray cameraRay;
 
-    qbVector<double> unsignedPoint{3}, localNormal{3}, localColor{3},
+    qbVector<double> localNormal{3}, localColor{3},
         closestIntPoint{3}, closestLocalNormal{3}, closestLocalColor{3};
 
     std::shared_ptr<qbRT::ObjectBase> closestObject;
@@ -66,12 +169,11 @@ qbVector<double> qbRT::Scene::ComputePixelColor(unsigned xPosition, unsigned yPo
     if (intFound)
     {
 
-        // first check if the current object has a material.
+        // use the material to computer the final color if there is any.
         if (closestObject->hasMaterial)
         {
             // reset  so that the other materials have a fresh count of number of rays.
             qbRT::MaterialBase::ResetRayCount();
-            // use the material to compute the color.
             return closestObject->material->ComputeColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, cameraRay);
         }
         else
@@ -82,7 +184,7 @@ qbVector<double> qbRT::Scene::ComputePixelColor(unsigned xPosition, unsigned yPo
             double red = 0.0, green = 0.0, blue = 0.0;
 
             matColor = qbRT::MaterialBase::ComputeDiffuseColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, closestObject->baseColor);
-            // compute the intensity of il lumination of the point of intersection.
+
             bool illumFound = IsThereValidLightIllumination(closestObject, closestIntPoint, closestLocalNormal, color, red, green, blue);
 
             if (illumFound)
@@ -166,107 +268,6 @@ void qbRT::Scene::NormalizeXandYCoordinates(unsigned xPosition, unsigned yPositi
     normY = yPosition * yFact - 1.0;
 }
 
-void qbRT::Scene::SetCamera()
-{
-    camera.SetPosition(0.0, -10.0, -1.0);
-    camera.SetLookAt(0.0, 0.0, 0.0);
-    camera.SetUp(0.0, 0.0, 1.0);
-    camera.SethorzSize(0.25);
-    camera.SetAspect(16.0 / 9.0);
-    camera.UpdateCameraGeometry();
-}
-
-void qbRT::Scene::SetMaterialsAndAssignToObjects()
-{
-
-    qbVector<qbVector<double>> colors{noOfMaterials};
-    colors.SetElement(0, ConstructVector(0.25, 0.5, 0.8));
-
-    qbVector<double> reflectivities{noOfMaterials},
-        shinelinessValues{noOfMaterials};
-
-    reflectivities.SetElement(0, 0.5);
-    shinelinessValues.SetElement(0, 10.0);
-
-    for (unsigned i = 0; i < noOfMaterials; i++)
-    {
-        materialList.push_back(std::make_shared<qbRT::SimpleMaterial>(qbRT::SimpleMaterial()));
-        materialList.at(i)->SetColor(colors.GetElement(i));
-        materialList.at(i)->SetReflectivity(reflectivities.GetElement(i));
-        materialList.at(i)->SetShininess(shinelinessValues.GetElement(i));
-    }
-    // some objects  won't have materials hence don't assign materials to object using
-    // object index.
-    objectList.at(0)->AssignMaterial(materialList.at(0));
-}
-
-void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
-{
-    qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
-    matrix1.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    matrix2.SetTransformationValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
-
-    objectList.at(0)->SetTranformMatrix(matrix1);
-    objectList.at(1)->SetTranformMatrix(matrix2);
-    objectList.at(2)->SetTranformMatrix(matrix3);
-    objectList.at(3)->SetTranformMatrix(planeMatrix);
-}
-
-void qbRT::Scene::AssignColorsToObject()
-{
-
-    qbVector<qbVector<double>> colors{noOfObjects};
-    colors.SetElement(0, ConstructVector(0.25, 0.5, 0.8));
-    colors.SetElement(1, ConstructVector(1.0, 0.5, 1.0));
-    colors.SetElement(2, ConstructVector(0.6, 0.6, 0.7));
-    colors.SetElement(3, ConstructVector(0.5, 0.5, 0.5));
-
-    for (unsigned i = 0; i < noOfObjects; i++)
-    {
-        objectList.at(i)->SetColor(colors.GetElement(i));
-    }
-}
-
-void qbRT::Scene::SetPointLightsColorsAndLocations()
-{
-
-    qbVector<qbVector<double>> colors{noOfPointLights};
-    qbVector<qbVector<double>> locations{noOfPointLights};
-
-    colors.SetElement(0, ConstructVector(1.0, 0.0, 0.0));
-    colors.SetElement(1, ConstructVector(0.0, 1.0, 0.0));
-    colors.SetElement(2, ConstructVector(0.0, 0.0, 1.0));
-
-    locations.SetElement(0, ConstructVector(5.0, -10.0, -5.0));
-    locations.SetElement(1, ConstructVector(-5.0, -10.0, -5.0));
-    locations.SetElement(2, ConstructVector(0.0, -10.0, -5.0));
-
-    for (int i = 0; i < noOfPointLights; ++i)
-    {
-        lightList.push_back(std::make_shared<qbRT::PointLight>(qbRT::PointLight()));
-        lightList.at(i)->SetColor(colors.GetElement(i));
-        lightList.at(i)->SetLocation(locations.GetElement(i));
-    }
-}
-
-void qbRT::Scene::AddObjects()
-{
-    unsigned noOfSpheres = 3;
-    unsigned noOfPlanes = 1;
-    for (int i = 0; i < noOfSpheres; ++i)
-    {
-        objectList.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
-    }
-
-    for (int i = 0; i < noOfPlanes; ++i)
-    {
-        objectList.push_back(std::make_shared<qbRT::ObjPlane>(qbRT::ObjPlane()));
-    }
-}
-
-// generate a factor between 0, and 2,
 double GetFactor(int size)
 {
     return 1.0 / (static_cast<double>(size) / 2.0);
