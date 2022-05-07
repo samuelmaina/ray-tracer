@@ -6,11 +6,16 @@
 #include <SDL2/SDL.h>
 #include "camera.hpp"
 #include "qbImage.hpp"
+
 #include "./primitives/objsphere.hpp"
 #include "./primitives/objplane.hpp"
+#include "./primitives/cylinder.hpp"
+
 #include "./lights/pointlight.hpp"
+
 #include "./utils/vectormanipulators.hpp"
 #include "./utils/mathUtils.hpp"
+
 #include "./materials/simplematerial.hpp"
 
 namespace qbRT

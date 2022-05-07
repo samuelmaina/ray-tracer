@@ -4,10 +4,6 @@ double GetFactor(int size);
 
 qbRT::Scene::Scene()
 {
-    noOfObjects = 4;
-    noOfPointLights = 3;
-    noOfMaterials = 1;
-
     SetCamera();
 
     // each object is centered at the origin by default  and translation is
@@ -44,14 +40,23 @@ void qbRT::Scene::AddObjects()
 {
     unsigned noOfSpheres = 3;
     unsigned noOfPlanes = 1;
+    unsigned noOfCylinders = 0;
+
+    noOfObjects = noOfPlanes + noOfSpheres + noOfCylinders;
+
+    for (int i = 0; i < noOfPlanes; ++i)
+    {
+        objectList.push_back(std::make_shared<qbRT::ObjPlane>(qbRT::ObjPlane()));
+    }
+
     for (int i = 0; i < noOfSpheres; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
     }
 
-    for (int i = 0; i < noOfPlanes; ++i)
+    for (int i = 0; i < noOfCylinders; ++i)
     {
-        objectList.push_back(std::make_shared<qbRT::ObjPlane>(qbRT::ObjPlane()));
+        objectList.push_back(std::make_shared<qbRT::Cylinder>(qbRT::Cylinder()));
     }
 }
 
@@ -59,10 +64,11 @@ void qbRT::Scene::AssignColorsToObject()
 {
 
     qbVector<qbVector<double>> colors{noOfObjects};
-    colors.SetElement(0, ConstructVector(0.25, 0.5, 0.8));
-    colors.SetElement(1, ConstructVector(1.0, 0.5, 1.0));
-    colors.SetElement(2, ConstructVector(0.6, 0.6, 0.7));
-    colors.SetElement(3, ConstructVector(0.5, 0.5, 0.5));
+
+    colors.SetElement(0, ConstructVector(0.5, 0.5, 0.5));
+    colors.SetElement(1, ConstructVector(0.25, 0.5, 0.8));
+    colors.SetElement(2, ConstructVector(1.0, 0.5, 1.0));
+    colors.SetElement(3, ConstructVector(1.0, 0.8, 0.5));
 
     for (unsigned i = 0; i < noOfObjects; i++)
     {
@@ -73,14 +79,20 @@ void qbRT::Scene::AssignColorsToObject()
 void qbRT::Scene::SetMaterialsAndAssignToObjects()
 {
 
+    noOfMaterials = 2;
+
     qbVector<qbVector<double>> colors{noOfMaterials};
-    colors.SetElement(0, ConstructVector(0.25, 0.5, 0.8));
+    colors.SetElement(0, ConstructVector(1.0, 1.0, 1.0));
+    colors.SetElement(1, ConstructVector(0.25, 0.5, 0.8));
 
     qbVector<double> reflectivities{noOfMaterials},
         shinelinessValues{noOfMaterials};
 
     reflectivities.SetElement(0, 0.5);
-    shinelinessValues.SetElement(0, 10.0);
+    reflectivities.SetElement(1, 0.3);
+
+    shinelinessValues.SetElement(0, 0.0);
+    shinelinessValues.SetElement(1, 10.0);
 
     for (unsigned i = 0; i < noOfMaterials; i++)
     {
@@ -92,25 +104,28 @@ void qbRT::Scene::SetMaterialsAndAssignToObjects()
     // some objects  won't have materials hence don't assign materials to object using
     // object index.
     objectList.at(0)->AssignMaterial(materialList.at(0));
+    objectList.at(1)->AssignMaterial(materialList.at(1));
 }
 
 void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
 {
     qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
+    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
+
     matrix1.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
     matrix2.SetTransformationValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
     matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
 
-    objectList.at(0)->SetTranformMatrix(matrix1);
-    objectList.at(1)->SetTranformMatrix(matrix2);
-    objectList.at(2)->SetTranformMatrix(matrix3);
-    objectList.at(3)->SetTranformMatrix(planeMatrix);
+    objectList.at(0)->SetTranformMatrix(planeMatrix);
+    objectList.at(1)->SetTranformMatrix(matrix1);
+    objectList.at(2)->SetTranformMatrix(matrix2);
+    objectList.at(3)->SetTranformMatrix(matrix3);
 }
 
 void qbRT::Scene::SetPointLightsColorsAndLocations()
 {
 
+    noOfPointLights = 3;
     qbVector<qbVector<double>> colors{noOfPointLights};
     qbVector<qbVector<double>> locations{noOfPointLights};
 
