@@ -15,7 +15,7 @@ qbVector<double> ConstructFinalColor(const double red, const double green, const
 bool GetRoots(double const a, double const b, double const c, double &root1, double &root2)
 {
     double twoA = 2.0 * a;
-    double det = GetSquare(b) - 4 * a * c;
+    double det = GetSquare(b) - 2 * twoA * c;
     // we are working in plane and we don't expect any complex numbers
     // hence return false (unable to find roots) when the roots are complex
     if (det < 0)

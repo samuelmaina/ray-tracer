@@ -13,6 +13,8 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
 {
 
     qbVector<double> lightDir = (location - intPoint).Normalized();
+
+    double lightDistance = (location - intPoint).norm();
     qbVector<double> startPoint = intPoint;
 
     // construct a ray from the point of intersection(which is assumed to be the starting Point at the beginning ) to the light source.
@@ -25,7 +27,6 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
 
     qbVector<double> interscPoint{3}, interscPointNormal{3}, interPointColor{3};
     bool validInt;
-    double lightDistance;
     for (auto obj : objectList)
     {
         if (obj != currentObject)
@@ -37,9 +38,9 @@ bool qbRT::PointLight::ComputeIllumination(const qbVector<double> &intPoint, con
             {
                 // get the distance between teh point of intersection and the source of light
                 double distance = (interscPoint - startPoint).norm();
-                // if (distance > lightDistance)
-                //     // this is a false positive, reject it.
-                //     validInt = false;
+                if (distance > lightDistance)
+                    // this is a false positive, reject it.
+                    validInt = false;
             }
         }
         // if there is an intersection, thne the object is blocking light from the light source so we no need
