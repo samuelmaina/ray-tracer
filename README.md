@@ -39,3 +39,8 @@ THe following are screenshots of  the different stages of development.
 
 ## Introduced different materials having different specular, shiness and reflectivity values
 ![Screenshot 2022-02-27 180440](https://user-images.githubusercontent.com/55924723/155990908-8ad1c0ff-c24d-496b-b829-b5d3f6acf95f.png)
+![different_reflexitivity](https://user-images.githubusercontent.com/55924723/184780442-7a37f754-ce13-40b7-927b-b45341aebeee.png)
+
+##Introducing Cylinders and cones
+![different_reflexitivity](https://user-images.githubusercontent.com/55924723/184780488-9f990971-3f39-4da0-aac0-9a158a8a8dc6.png)
+
