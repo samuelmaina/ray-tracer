@@ -2,9 +2,9 @@
 An application that implements ray tracing from scratch using mathematics and linear algebra to render object of different shapes,materials, shininess , colors, and reflectivity in 3D scene.
 
 ## How the application works.
-The application firstplaces different object in the a 3D plane. The light sources and cameras are  placed at specific position whereas the other objects and planes are initially placed at the origin which are later moved by translation.
+The application first places different object in the a 3D plane. The light sources and camera are  placed at specific position whereas the other objects and planes are initially placed at the origin then later transformed and  translated using matrix operations.
 
-The  scene has different light sources of different colours in which rays intersect with different object surfaces producing different images. 
+Different objects and their reflexitivity,shininess and colours are all modelled using linear algebra and mathematics.
 
 ## Running the code
 - Download the SDL2  from https://www.libsdl.org/download-2.0.php,
