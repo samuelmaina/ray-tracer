@@ -68,9 +68,12 @@ THe following are screenshots of  the different stages of development.
 ![specular_mathematics](https://user-images.githubusercontent.com/55924723/189187573-6217a5ac-c8f1-4b86-ac6d-92254e6f1ad8.png)
 
 ### Reflection vectors and the intersection equations
+![reflectivity_mathematics](https://user-images.githubusercontent.com/55924723/189187605-24e71943-dec6-480f-8cf0-8187215bc051.png)
+
+### implementation
 ![Screenshot 2022-02-27 180440](https://user-images.githubusercontent.com/55924723/155990908-8ad1c0ff-c24d-496b-b829-b5d3f6acf95f.png)
 ![different_reflexitivity](https://user-images.githubusercontent.com/55924723/184780442-7a37f754-ce13-40b7-927b-b45341aebeee.png)
-![reflectivity_mathematics](https://user-images.githubusercontent.com/55924723/189187605-24e71943-dec6-480f-8cf0-8187215bc051.png)
+
 
 ## Introducing Cylinders and cones
 ![Cylinder_and_cones](https://user-images.githubusercontent.com/55924723/184780631-8469010e-1965-4e9d-adfc-396eba6e6b41.png)
