@@ -40,9 +40,10 @@ void qbRT::Scene::AddObjects()
 {
     unsigned noOfSpheres = 3;
     unsigned noOfPlanes = 1;
-    unsigned noOfCylinders = 0;
+    unsigned noOfCylinders = 3;
+    unsigned noOfCones = 3;
 
-    noOfObjects = noOfPlanes + noOfSpheres + noOfCylinders;
+    noOfObjects = noOfPlanes + noOfSpheres + noOfCylinders + noOfCones;
 
     for (int i = 0; i < noOfPlanes; ++i)
     {
@@ -57,6 +58,10 @@ void qbRT::Scene::AddObjects()
     for (int i = 0; i < noOfCylinders; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::Cylinder>(qbRT::Cylinder()));
+    }
+    for (int i = 0; i < noOfCones; ++i)
+    {
+        objectList.push_back(std::make_shared<qbRT::Cone>(qbRT::Cone()));
     }
 }
 
@@ -79,11 +84,13 @@ void qbRT::Scene::AssignColorsToObject()
 void qbRT::Scene::SetMaterialsAndAssignToObjects()
 {
 
-    noOfMaterials = 2;
+    noOfMaterials = 4;
 
     qbVector<qbVector<double>> colors{noOfMaterials};
     colors.SetElement(0, ConstructVector(1.0, 1.0, 1.0));
     colors.SetElement(1, ConstructVector(0.25, 0.5, 0.8));
+    colors.SetElement(0, ConstructVector(1.0, 0.5, 1.0));
+    colors.SetElement(1, ConstructVector(0.25, 0.5, 1.2));
 
     qbVector<double> reflectivities{noOfMaterials},
         shinelinessValues{noOfMaterials};
@@ -109,17 +116,27 @@ void qbRT::Scene::SetMaterialsAndAssignToObjects()
 
 void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
 {
-    qbRT::GTForm matrix1, matrix2, matrix3, planeMatrix;
-    planeMatrix.SetTransformationValues(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 4.0, 4.0, 1.0);
 
-    matrix1.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    matrix2.SetTransformationValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-    matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+    for (size_t i = 1; i <= 4; i++)
+    {
+        qbRT::GTForm matrix1, matrix2, matrix3, matrix4, matrix5, matrix6, matrix7;
 
-    objectList.at(0)->SetTranformMatrix(planeMatrix);
-    objectList.at(1)->SetTranformMatrix(matrix1);
-    objectList.at(2)->SetTranformMatrix(matrix2);
-    objectList.at(3)->SetTranformMatrix(matrix3);
+        matrix1.SetTransformationValues(-1.5 * i, 0.0, 0.0, 1.0 * i, 0.0, 0.0, 0.5, 0.5, 0.5);
+        matrix2.SetTransformationValues(0.0 * i, 0.0, 0.0, 1.0 * i, 0.0, 0.0, 0.5, 0.5, 0.5);
+        matrix3.SetTransformationValues(1.5 * i, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5 * i, 0.5, 0.5);
+        matrix4.SetTransformationValues(-1.5 * i, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+        matrix5.SetTransformationValues(0.0 * i, 0.0, 0.0, 0.0, 0.5 * i, 0.0, 0.5, 0.5 * i, 0.5 * i);
+        matrix6.SetTransformationValues(1.5 * i, 0.0, 0.0, 0.0, 0.5 * i, 0.0, 0.5 * i, 0.5, 0.5);
+        matrix6.SetTransformationValues(1.5 * i, 0.0, 0.0, 0.0, 0.5 * i, 0.0, 0.5, 0.5, 0.5);
+
+        // the object start at 0 hence the need to minus 1 from the i*n (it will always start from 0)
+        objectList.at(1 * i - 1)->SetTranformMatrix(matrix1);
+        objectList.at(2 * i - 1)->SetTranformMatrix(matrix1);
+        objectList.at(3 * i - 1)->SetTranformMatrix(matrix1);
+        objectList.at(4 * i - 1)->SetTranformMatrix(matrix1);
+        objectList.at(5 * i - 1)->SetTranformMatrix(matrix1);
+        objectList.at(6 * i - 1)->SetTranformMatrix(matrix1);
+    }
 }
 
 void qbRT::Scene::SetPointLightsColorsAndLocations()

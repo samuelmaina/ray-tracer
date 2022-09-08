@@ -10,6 +10,7 @@
 #include "./primitives/objsphere.hpp"
 #include "./primitives/objplane.hpp"
 #include "./primitives/cylinder.hpp"
+#include "./primitives/cone.hpp"
 
 #include "./lights/pointlight.hpp"
 
