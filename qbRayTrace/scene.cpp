@@ -38,10 +38,10 @@ void qbRT::Scene::SetCamera()
 
 void qbRT::Scene::AddObjects()
 {
-    unsigned noOfSpheres = 3;
+    unsigned noOfSpheres = 12;
     unsigned noOfPlanes = 1;
-    unsigned noOfCylinders = 3;
-    unsigned noOfCones = 3;
+    unsigned noOfCylinders = 8;
+    unsigned noOfCones = 8;
 
     noOfObjects = noOfPlanes + noOfSpheres + noOfCylinders + noOfCones;
 
@@ -50,15 +50,20 @@ void qbRT::Scene::AddObjects()
         objectList.push_back(std::make_shared<qbRT::ObjPlane>(qbRT::ObjPlane()));
     }
 
+    startIndices[0] = noOfPlanes;
+
     for (int i = 0; i < noOfSpheres; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::ObjSphere>(qbRT::ObjSphere()));
     }
 
+    startIndices[1] = startIndices[0] + noOfCylinders;
     for (int i = 0; i < noOfCylinders; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::Cylinder>(qbRT::Cylinder()));
     }
+
+    startIndices[2] = startIndices[1] + noOfCones;
     for (int i = 0; i < noOfCones; ++i)
     {
         objectList.push_back(std::make_shared<qbRT::Cone>(qbRT::Cone()));
@@ -108,10 +113,16 @@ void qbRT::Scene::SetMaterialsAndAssignToObjects()
         materialList.at(i)->SetReflectivity(reflectivities.GetElement(i));
         materialList.at(i)->SetShininess(shinelinessValues.GetElement(i));
     }
-    // some objects  won't have materials hence don't assign materials to object using
-    // object index.
+    // assign the plane the first material
     objectList.at(0)->AssignMaterial(materialList.at(0));
-    objectList.at(1)->AssignMaterial(materialList.at(1));
+
+    for (size_t j = 1; j < noOfMaterials; j++)
+    {
+        for (size_t i = 1; i < startIndices[j - 1]; i++)
+        {
+            objectList.at(i)->AssignMaterial(materialList.at(j));
+        }
+    }
 }
 
 void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
@@ -119,23 +130,124 @@ void qbRT::Scene::SetTransformationMatricesAndApplyToObjects()
 
     for (size_t i = 1; i <= 4; i++)
     {
-        qbRT::GTForm matrix1, matrix2, matrix3, matrix4, matrix5, matrix6, matrix7;
+        qbRT::GTForm normalMatrix, matrix1, matrix2, matrix3, matrix4, matrix5, matrix6, matrix7;
 
-        matrix1.SetTransformationValues(-1.5 * i, 0.0, 0.0, 1.0 * i, 0.0, 0.0, 0.5, 0.5, 0.5);
-        matrix2.SetTransformationValues(0.0 * i, 0.0, 0.0, 1.0 * i, 0.0, 0.0, 0.5, 0.5, 0.5);
-        matrix3.SetTransformationValues(1.5 * i, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5 * i, 0.5, 0.5);
-        matrix4.SetTransformationValues(-1.5 * i, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
-        matrix5.SetTransformationValues(0.0 * i, 0.0, 0.0, 0.0, 0.5 * i, 0.0, 0.5, 0.5 * i, 0.5 * i);
-        matrix6.SetTransformationValues(1.5 * i, 0.0, 0.0, 0.0, 0.5 * i, 0.0, 0.5 * i, 0.5, 0.5);
-        matrix6.SetTransformationValues(1.5 * i, 0.0, 0.0, 0.0, 0.5 * i, 0.0, 0.5, 0.5, 0.5);
+        int cardinal_point = i % 4;
 
-        // the object start at 0 hence the need to minus 1 from the i*n (it will always start from 0)
-        objectList.at(1 * i - 1)->SetTranformMatrix(matrix1);
-        objectList.at(2 * i - 1)->SetTranformMatrix(matrix1);
-        objectList.at(3 * i - 1)->SetTranformMatrix(matrix1);
-        objectList.at(4 * i - 1)->SetTranformMatrix(matrix1);
-        objectList.at(5 * i - 1)->SetTranformMatrix(matrix1);
-        objectList.at(6 * i - 1)->SetTranformMatrix(matrix1);
+        switch (cardinal_point)
+        {
+        case 1:
+            normalMatrix.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            unsigned startSphereIndex = startIndices[0] * cardinal_point;
+            unsigned startConeIndex = startIndices[2] * cardinal_point;
+
+            // to eleveate the first cylinder
+            matrix1.SetTransformationValues(-1.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            // to make the second sphere bigger by a factor of 2.
+            matrix2.SetTransformationValues(-1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+
+            // to tapple the 1st cone.
+            matrix3.SetTransformationValues(-1.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            objectList.at(startSphereIndex)->SetTranformMatrix(matrix1);
+            objectList.at(startSphereIndex + 1)->SetTranformMatrix(matrix2);
+            objectList.at(startConeIndex)->SetTranformMatrix(matrix3);
+            for (int j = 1 + (cardinal_point - 1) * ((noOfObjects - 1) / 4); j < noOfObjects / 4; j++)
+            {
+                if (!(j == startSphereIndex || j == startSphereIndex + 1 || startConeIndex))
+                {
+                    objectList.at(j)->SetTranformMatrix(normalMatrix);
+                }
+            }
+            break;
+
+        case 2:
+            normalMatrix.SetTransformationValues(0.0, 0.0, -1.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            unsigned startSphereIndex = startIndices[0] * cardinal_point;
+            unsigned startConeIndex = startIndices[2] * cardinal_point;
+
+            // to eleveate the first cylinder
+            matrix1.SetTransformationValues(0.0, 1.0, -1.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            // to make the second sphere bigger by a factor of 2.
+            matrix2.SetTransformationValues(0.0, 0.0, -1.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+
+            // to tapple the 1st cone.
+            matrix3.SetTransformationValues(0.0, 0.0, -1.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            objectList.at(startSphereIndex)->SetTranformMatrix(matrix1);
+            objectList.at(startSphereIndex + 1)->SetTranformMatrix(matrix2);
+            objectList.at(startConeIndex)->SetTranformMatrix(matrix3);
+            for (int j = 1 + (cardinal_point - 1) * ((noOfObjects - 1) / 4); j < noOfObjects / (4 * 2); j++)
+            {
+                if (!(j == startSphereIndex || j == startSphereIndex + 1 || startConeIndex))
+                {
+                    objectList.at(j)->SetTranformMatrix(normalMatrix);
+                }
+            }
+            break;
+
+        case 3:
+            normalMatrix.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            unsigned startSphereIndex = startIndices[0] * cardinal_point;
+            unsigned startConeIndex = startIndices[2] * cardinal_point;
+
+            // to eleveate the first cylinder
+            matrix1.SetTransformationValues(1.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            // to make the second sphere bigger by a factor of 2.
+            matrix2.SetTransformationValues(1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+
+            // to tapple the 1st cone.
+            matrix3.SetTransformationValues(1.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            objectList.at(startSphereIndex)->SetTranformMatrix(matrix1);
+            objectList.at(startSphereIndex + 1)->SetTranformMatrix(matrix2);
+            objectList.at(startConeIndex)->SetTranformMatrix(matrix3);
+            for (int j = 1 + (cardinal_point - 1) * ((noOfObjects - 1) / 4); j < (int)(noOfObjects * (3.0 / 4)); j++)
+            {
+                if (!(j == startSphereIndex || j == startSphereIndex + 1 || startConeIndex))
+                {
+                    objectList.at(j)->SetTranformMatrix(normalMatrix);
+                }
+            }
+            break;
+
+        case 4:
+            normalMatrix.SetTransformationValues(0, 0.0, 1.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            unsigned startSphereIndex = startIndices[0] * cardinal_point;
+            unsigned startConeIndex = startIndices[2] * cardinal_point;
+
+            // to eleveate the first cylinder
+            matrix1.SetTransformationValues(0.0, 1.0, 1.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            // to make the second sphere bigger by a factor of 2.
+            matrix2.SetTransformationValues(0.0, 0.0, 1.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+
+            // to tapple the 1st cone.
+            matrix3.SetTransformationValues(0.0, 0.0, 1.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5);
+
+            objectList.at(startSphereIndex)->SetTranformMatrix(matrix1);
+            objectList.at(startSphereIndex + 1)->SetTranformMatrix(matrix2);
+            objectList.at(startConeIndex)->SetTranformMatrix(matrix3);
+            for (int j = 1 + (cardinal_point - 1) * ((noOfObjects - 1) / 4); j < noOfObjects; j++)
+            {
+                if (!(j == startSphereIndex || j == startSphereIndex + 1 || startConeIndex))
+                {
+                    objectList.at(j)->SetTranformMatrix(normalMatrix);
+                }
+            }
+            break;
+        default:
+            std::cout << "Invalid cardinal point";
+            exit(1);
+            break;
+        }
     }
 }
 

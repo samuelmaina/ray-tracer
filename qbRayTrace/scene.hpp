@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include <memory>
+#include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
 #include "camera.hpp"
@@ -38,6 +39,10 @@ namespace qbRT
         unsigned xSize, ySize;
         double xFact, yFact;
         const double minDist = 0.0, maxDist = 1e6;
+
+        // store the starting indices for the different objects that are in the scene.
+        // Done for easy references for the start indices for the different objects.
+        std::vector<int> startIndices{3};
 
         void SetCamera();
 
