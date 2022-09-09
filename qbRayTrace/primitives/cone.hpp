@@ -3,6 +3,7 @@
 #define CONE_H
 
 #include <cmath>
+#include <vector>
 #include "objectbase.hpp"
 #include "../geometrytransformation.hpp"
 

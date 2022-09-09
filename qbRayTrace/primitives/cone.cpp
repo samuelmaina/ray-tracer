@@ -15,14 +15,14 @@ bool qbRT::Cone::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &in
                                   qbVector<double> &localNormal, qbVector<double> &localColor)
 {
     // Copy the ray and apply the backwards transform.
-    qbRT::Ray bckRay = m_transformMatrix.Apply(castRay, qbRT::BCKTFORM);
+    qbRT::Ray bckRay = trnfrmMatrix.Apply(castRay, qbRT::BCKTFORM);
 
     // Copy the m_lab vector from bckRay and normalize it.
-    qbVector<double> v = bckRay.m_lab;
+    qbVector<double> v = bckRay.GetRayVector();
     v.Normalize();
 
     // Get the start point of the line.
-    qbVector<double> p = bckRay.m_point1;
+    qbVector<double> p = bckRay.GetPoint1();
 
     // Compute a, b and c.
     double a = std::pow(v.GetElement(0), 2.0) + std::pow(v.GetElement(1), 2.0) - std::pow(v.GetElement(2), 2.0);
@@ -32,8 +32,8 @@ bool qbRT::Cone::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &in
     // Compute b^2 - 4ac.
     double numSQRT = sqrtf(std::pow(b, 2.0) - 4 * a * c);
 
-    std::array<qbVector<double>, 3> poi;
-    std::array<double, 3> t;
+    std::vector<qbVector<double>> poi(3);
+    std::vector<double> t(3);
     bool t1Valid, t2Valid, t3Valid;
     if (numSQRT > 0.0)
     {
@@ -42,8 +42,8 @@ bool qbRT::Cone::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &in
         t.at(1) = (-b - numSQRT) / (2 * a);
 
         // Compute the points of intersection.
-        poi.at(0) = bckRay.m_point1 + (v * t[0]);
-        poi.at(1) = bckRay.m_point1 + (v * t[1]);
+        poi.at(0) = bckRay.GetPoint1() + (v * t[0]);
+        poi.at(1) = bckRay.GetPoint1() + (v * t[1]);
 
         if ((t.at(0) > 0.0) && (poi.at(0).GetElement(2) > 0.0) && (poi.at(0).GetElement(2) < 1.0))
         {
@@ -82,10 +82,10 @@ bool qbRT::Cone::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &in
     else
     {
         // Compute values for t.
-        t.at(2) = (bckRay.m_point1.GetElement(2) - 1.0) / -v.GetElement(2);
+        t.at(2) = (bckRay.GetPoint1().GetElement(2) - 1.0) / -v.GetElement(2);
 
         // Compute points of intersection.
-        poi.at(2) = bckRay.m_point1 + t.at(2) * v;
+        poi.at(2) = bckRay.GetPoint1() + t.at(2) * v;
 
         // Check if these are valid.
         if ((t.at(2) > 0.0) && (sqrtf(std::pow(poi.at(2).GetElement(0), 2.0) + std::pow(poi.at(2).GetElement(1), 2.0)) < 1.0))
@@ -121,25 +121,25 @@ bool qbRT::Cone::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &in
     if (minIndex < 2)
     {
         // Transform the intersection point back into world coordinates.
-        intPoint = m_transformMatrix.Apply(validPOI, qbRT::FWDTFORM);
+        intPoint = trnfrmMatrix.Apply(validPOI, qbRT::FWDTFORM);
 
         // Compute the local normal.
         qbVector<double> orgNormal{3};
         qbVector<double> newNormal{3};
         qbVector<double> localOrigin{std::vector<double>{0.0, 0.0, 0.0}};
-        qbVector<double> globalOrigin = m_transformMatrix.Apply(localOrigin, qbRT::FWDTFORM);
+        qbVector<double> globalOrigin = trnfrmMatrix.Apply(localOrigin, qbRT::FWDTFORM);
         double tX = validPOI.GetElement(0);
         double tY = validPOI.GetElement(1);
         double tZ = -sqrtf(pow(tX, 2.0) + pow(tY, 2.0));
         orgNormal.SetElement(0, tX);
         orgNormal.SetElement(1, tY);
         orgNormal.SetElement(2, tZ);
-        newNormal = m_transformMatrix.Apply(orgNormal, qbRT::FWDTFORM) - globalOrigin;
+        newNormal = trnfrmMatrix.Apply(orgNormal, qbRT::FWDTFORM) - globalOrigin;
         newNormal.Normalize();
         localNormal = newNormal;
 
         // Return the base color.
-        localColor = m_baseColor;
+        localColor = baseColor;
 
         return true;
     }
@@ -152,18 +152,17 @@ bool qbRT::Cone::TestIntersection(const qbRT::Ray &castRay, qbVector<double> &in
             if (sqrtf(std::pow(validPOI.GetElement(0), 2.0) + std::pow(validPOI.GetElement(1), 2.0)) < 1.0)
             {
                 // Transform the intersection point back into world coordinates.
-                intPoint = m_transformMatrix.Apply(validPOI, qbRT::FWDTFORM);
+                intPoint = trnfrmMatrix.Apply(validPOI, qbRT::FWDTFORM);
 
                 // Compute the local normal.
                 qbVector<double> localOrigin{std::vector<double>{0.0, 0.0, 0.0}};
                 qbVector<double> normalVector{std::vector<double>{0.0, 0.0, 1.0}};
-                qbVector<double> globalOrigin = m_transformMatrix.Apply(localOrigin, qbRT::FWDTFORM);
-                localNormal = m_transformMatrix.Apply(normalVector, qbRT::FWDTFORM) - globalOrigin;
+                qbVector<double> globalOrigin = trnfrmMatrix.Apply(localOrigin, qbRT::FWDTFORM);
+                localNormal = trnfrmMatrix.Apply(normalVector, qbRT::FWDTFORM) - globalOrigin;
                 localNormal.Normalize();
 
                 // Return the base color.
-                localColor = m_baseColor;
-
+                localColor = baseColor;
                 return true;
             }
             else
