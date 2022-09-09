@@ -75,7 +75,8 @@ THe following are screenshots of  the different stages of development.
 ![different_reflexitivity](https://user-images.githubusercontent.com/55924723/184780442-7a37f754-ce13-40b7-927b-b45341aebeee.png)
 
 
-## Introducing Cylinders and cones
+## Introducing Cylinders and Cones
 ![Cylinder_and_cones](https://user-images.githubusercontent.com/55924723/184780631-8469010e-1965-4e9d-adfc-396eba6e6b41.png)
+
 
 
